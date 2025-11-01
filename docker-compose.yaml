@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  nginx_service:
+    image: nginx:latest
+    ports:
+      - "8000-8009:80"
