@@ -1,0 +1,18 @@
+# run will pull image automatically but explicit pull allows us to specify alternative registry
+docker pull nginx
+
+docker run -p 8989:80 -d nginx
+
+# check if web interface for container is running
+sleep 2
+curl localhost:8989 > /dev/null 2>&1 && echo succesful || echo error
+
+for i in {1..9}; do
+docker run -Pd nginx
+done
+
+# to take a look on running containers before they will be stopped
+docker ps
+# docker ps -q | awk '{system("docker stop " $1)}'
+### better because stops only nginx containers
+docker stop $(docker ps -q --filter ancestor=nginx)
