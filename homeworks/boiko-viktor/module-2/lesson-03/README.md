@@ -1,7 +1,7 @@
-# Збірка імеджа nonroot при умові що знахожимось в дерикторії уроку
+# Збірка імеджа nonroot при умові що знаходимось в дерикторії уроку
 `buildx build --platform linux/amd64,linux/arm64  -t viktor1sss/goapp:nonroot -f Dockerfile.nonroot  ../../../../apps/simple-app --push`
 
-# Збірка імеджа scratch при умові що знахожимось в дерикторії уроку
+# Збірка імеджа scratch при умові що знаходимось в дерикторії уроку
 `buildx build --platform linux/amd64,linux/arm64  -t viktor1sss/goapp:scratch -f Dockerfile.scratch  ../../../../apps/simple-app --push`
 
 # Запуск контейнерів на порту 8080-8081
