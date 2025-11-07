@@ -1,6 +1,6 @@
 ## Build image
 ```bash
-docker build -t simple-app \
+docker build -t simple-app:1.0.0 \
   -f homeworks/klymenko-oleksandr/module-2/lesson-03/Dockerfile \
   apps/simple-app
 ```
