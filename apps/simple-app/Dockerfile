@@ -7,6 +7,7 @@ WORKDIR /app
 # Best practice https://docs.docker.com/build/building/best-practices/#add-or-copy
 RUN --mount=type=bind,source=go.mod,target=go.mod,readonly --mount=type=bind,source=go.sum,target=go.sum,readonly go mod download
 
+# Give complete file ownership for deploy
 COPY --chown=deploy:deploy --chmod=700 . .
 
 RUN go build -o binary
