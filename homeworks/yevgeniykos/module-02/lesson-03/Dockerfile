@@ -13,7 +13,8 @@ WORKDIR /app
 
 EXPOSE 8080
 RUN adduser -D tester
-USER tester
+
 COPY --from=builder ./app .
+USER tester
 
 ENTRYPOINT ["/app/tinyserv"]
