@@ -28,7 +28,7 @@ func getEnv(key, defaultValue string) string {
 }
 
 func main() {
-	version := getEnv("APP_VERSION", "2.0.0")
+	version := getEnv("APP_VERSION", "2.0.1")
 	environment := getEnv("ENVIRONMENT", "development")
 
 	// Parse templates
