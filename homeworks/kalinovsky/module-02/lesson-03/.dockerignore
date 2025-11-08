@@ -1,6 +1,0 @@
-.git
-.gitignore
-*.log
-*.tmp
-homeworks/*
-!homeworks/kalinovsky/module-02/lesson-03/
