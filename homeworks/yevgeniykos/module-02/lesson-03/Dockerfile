@@ -12,7 +12,7 @@ FROM alpine:3.22
 
 EXPOSE 8080
 RUN adduser -D tester
-USER tester
+WORKDIR /home/tester/app
 COPY --from=builder ./app .
 USER tester
 
