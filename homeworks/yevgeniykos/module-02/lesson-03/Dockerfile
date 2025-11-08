@@ -4,16 +4,16 @@ WORKDIR /app
 COPY ./apps/simple-app/go.mod ./apps/simple-app/go.sum ./
 RUN go mod download
 
-COPY ./apps/simple-app/ .
+COPY ./apps/simple-app/ ./
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+RUN CGO_ENABLED=0 GOOS=linux go build -o tinyserv ./
 
 FROM alpine:3.22
-WORKDIR /
+WORKDIR /app
 
 EXPOSE 8080
 RUN adduser -D tester
 USER tester
 COPY --from=builder ./app .
 
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/app/tinyserv"]

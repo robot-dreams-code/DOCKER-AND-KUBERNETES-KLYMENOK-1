@@ -28,7 +28,7 @@ func getEnv(key, defaultValue string) string {
 }
 
 func main() {
-	version := getEnv("APP_VERSION", "1.0.0")
+	version := getEnv("APP_VERSION", "2.0.0")
 	environment := getEnv("ENVIRONMENT", "development")
 
 	// Parse templates
@@ -64,7 +64,7 @@ func main() {
 	log.Printf("🚀 Server starting on http://localhost%s", port)
 	log.Printf("📦 Version: %s | Environment: %s", version, environment)
 
-	if err := http.ListenAndServe(port, r); err != nil {
+	if err := http.ListenAndServe("127.0.0.1"+port, r); err != nil {
 		log.Fatal("Server failed to start:", err)
 	}
 }
