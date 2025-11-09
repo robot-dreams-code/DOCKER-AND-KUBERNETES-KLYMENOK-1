@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster AS builder 
+FROM python:3.12-slim-buster AS builder 
 
 # Set the working directory in the container
 WORKDIR /app
@@ -13,10 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port your application listens on (if it's a web app)
-EXPOSE 8000
+EXPOSE 8080
 
 # Define environment variables (optional)
 ENV NAME World
 
 # Run your Python application
-CMD ["python", "uvicorn src.main:app --host 0.0.0.0 --port 8080"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
