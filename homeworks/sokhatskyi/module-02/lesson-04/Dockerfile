@@ -1,18 +1,13 @@
 FROM python:3.14-slim-bookworm AS build
 WORKDIR /app/
 
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-FROM python:3.14-slim-bookworm AS runner
-WORKDIR /app/
-COPY --from=build /opt/venv /opt/venv
+COPY src/ .
 
-ENV PATH="/opt/venv/bin:$PATH"
-COPY . /app/
+RUN useradd app
+USER app
 
 EXPOSE 8080
 
