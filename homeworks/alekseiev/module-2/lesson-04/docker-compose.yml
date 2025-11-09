@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: ../../../../
+      dockerfile: homeworks/alekseiev/module-2/lesson-04/Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+      APP_MESSAGE: "Docker Compose App Message"
+    container_name: course_app
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:7
+    container_name: course_app_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  redis_data:
