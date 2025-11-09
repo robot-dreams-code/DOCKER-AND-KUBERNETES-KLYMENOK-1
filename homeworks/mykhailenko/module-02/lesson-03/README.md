@@ -1,6 +1,6 @@
 ### Homework
 
-Використав образ golang:1.25.0-alpine3.22, через те, наскільки легкий Alpine, та через завчасно встановлений Go. Для stage "target" використав Scratch, щоби вага образу була максимально мала. Сам image закинув в Docker Hub. Ось PR.
+Використав образ golang:1.25.0-alpine3.22, через те, наскільки легкий Alpine, та через завчасно встановлений Go. Для stage "target" використав Scratch, щоби вага образу була максимально мала. Сам image закинув в [Docker Hub](https://hub.docker.com/repository/docker/mmykhailenko/lesson-03/general).
 
 Scratch зробив image приємно легшим
 
