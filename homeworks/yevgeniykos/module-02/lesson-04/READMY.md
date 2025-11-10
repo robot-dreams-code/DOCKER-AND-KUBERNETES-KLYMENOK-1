@@ -28,10 +28,16 @@ async def lifespan(app: FastAPI):
 
 ![Alt Text](img/Image_fs.png)
 
+Stress CPU:
+
+![Alt Text](img/Stresstest.png)
 
 ![Alt Text](img/Working.png)
 
 Команда для compose 
 `docker compose -f ./homeworks/yevgeniykos/module-02/lesson-04/docker-compose.yaml up -d`
+
+Посилання на Docker Hub 
+    `docker push rdlsolutions/course-app:tagname`
 
 ![Alt Text](img/Containers.png)
