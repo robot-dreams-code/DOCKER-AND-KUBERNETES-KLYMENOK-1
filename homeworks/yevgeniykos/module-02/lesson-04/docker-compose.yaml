@@ -5,6 +5,9 @@ services:
       - "8090:8090"
     environment:
       - APP_MESSAGE=Welcome to the Course Application!
+    networks:
+      - db
+      - app
     depends_on:
       - redis
       - dblite
@@ -15,6 +18,8 @@ services:
       - APP_REDIS_URL=redis://redis:6379/0
     volumes:
       - app-data:/data
+    networks:
+      - db
     ports:
       - "6379:6379"
   dblite:
@@ -22,10 +27,17 @@ services:
     command: ["sleep", "infinity"]
     environment:
       - APP_DB_PATH=/data/app.db
+    networks:
+      - db
     ports:
       - "8080:8080"
     volumes:
       - dbl-data:/data
+
+networks:
+  default:
+    db: bridge
+    app: bridge
 
 volumes:
   app-data:
