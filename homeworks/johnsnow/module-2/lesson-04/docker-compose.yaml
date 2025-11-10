@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: ../../../../apps/course-app
+      dockerfile: ../../homeworks/klymenko-oleksandr/module-2/lesson-04/Dockerfile
+    container_name: course-app
+    environment:
+      APP_STORE: "redis"
+      APP_REDIS_URL: "redis://redis:6379/0"
+      APP_MESSAGE: "Welcome to the Course App"
+      APP_DB_PATH: "/data/app.db"
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - course_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: course-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - course_net
+    volumes:
+      - redis-data:/data
+
+networks:
+  course_net:
+
+volumes:
+  redis-data:
