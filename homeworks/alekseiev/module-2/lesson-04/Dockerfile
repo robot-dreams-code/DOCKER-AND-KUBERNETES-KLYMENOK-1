@@ -1,25 +1,34 @@
 FROM python:3.13-slim AS builder
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential && \
+    pip install --upgrade pip
+
 WORKDIR /app
 
-COPY apps/course-app/requirements.txt .
 
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --prefix=/install -r requirements.txt && \
+    apt-get purge -y build-essential && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 FROM python:3.13-slim
 
+RUN useradd --no-create-home --shell /bin/false appuser
+
 WORKDIR /app
 
-COPY apps/course-app .
-COPY --from=builder /usr/local /usr/local
+COPY --from=builder /install /usr/local
 
-RUN useradd -r -s /bin/false courseapp && \
-    chown -R courseapp:courseapp /app
+COPY . /app
 
-USER courseapp
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+USER appuser
 
 EXPOSE 8080
 
-# Use CMD to make the image reusable for running tests or other commands
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
