@@ -4,15 +4,15 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - APP_STORE=redis
-      - APP_DB_PATH=/data/app.db
-      - APP_REDIS_URL=redis://redis:6379/0
       - APP_MESSAGE=Welcome to the Course Application!
     depends_on:
       - redis
       - dblite
   redis:
     image: "redis:alpine"
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
     volumes:
       - app-data:/data
     ports:
@@ -20,6 +20,8 @@ services:
   dblite:
     image: "klee/sqlite:3400100_ubuntu_jammy-20230126"
     command: ["sleep", "infinity"]
+    environment:
+      - APP_DB_PATH=/data/app.db
     ports:
       - "8080:8080"
     volumes:
