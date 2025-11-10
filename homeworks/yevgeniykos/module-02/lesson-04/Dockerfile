@@ -1,7 +1,5 @@
 FROM python:3.13.9-trixie AS builder 
 
-RUN useradd --create-home lesson4 || true
-
 WORKDIR /app
 # Install system dependencies
 #RUN apt-get update \
@@ -10,7 +8,7 @@ WORKDIR /app
 
 COPY ./apps/course-app/requirements.txt .
 # Install Python deps
-RUN python -m pip install fastapi
+#RUN python -m pip install fastapi
 RUN python -m pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt
 # Copy application code
@@ -20,7 +18,17 @@ ENV PYTHONUNBUFFERED=1
 # Use non-root user
 USER lesson4
 # Expose the port your application listens on (if it's a web app)
+#EXPOSE 8090
+
+FROM alpine:3.22
+
 EXPOSE 8090
+RUN useradd --create-home lesson4 || true
+WORKDIR /home/lesson4/app
+COPY --from=builder ./app .
+USER lesson4
+
+#ENTRYPOINT ["/home/tester/app/tinyserv"]
 
 # Define environment variables (optional)
 ENV APP_STORE=redis
