@@ -1,0 +1,20 @@
+FROM golang:1.25.0-alpine3.22 AS build
+
+RUN addgroup -S deploy && adduser -S deploy -G deploy
+
+WORKDIR /app
+
+# Best practice https://docs.docker.com/build/building/best-practices/#add-or-copy
+RUN --mount=type=bind,source=go.mod,target=go.mod,readonly --mount=type=bind,source=go.sum,target=go.sum,readonly go mod download
+
+# Give complete file ownership for deploy
+COPY --chown=deploy:deploy --chmod=700 . .
+
+RUN go build -o binary && chown deploy:deploy binary && chmod 500 binary
+
+
+USER deploy:deploy
+
+EXPOSE 8080
+
+ENTRYPOINT [ "/app/binary" ]
