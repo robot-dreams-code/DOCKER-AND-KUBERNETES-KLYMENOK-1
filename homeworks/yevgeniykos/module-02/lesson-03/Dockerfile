@@ -6,7 +6,7 @@ RUN go mod download
 
 COPY ./apps/simple-app/ ./
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o tinyserv ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o app ./
 
 FROM alpine:3.22
 
@@ -16,4 +16,4 @@ WORKDIR /home/tester/app
 COPY --from=builder ./app .
 USER tester
 
-ENTRYPOINT ["/home/tester/app/tinyserv"]
+ENTRYPOINT ["/home/tester/app/app"]
