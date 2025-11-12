@@ -34,4 +34,4 @@ services:
       retries: 10
       start_period: 3s
 volumes:
-  redis-data:
+  redis-data: 
