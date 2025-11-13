@@ -1,0 +1,44 @@
+services:
+  app:
+    image: "course-app:1.0.2"
+    ports:
+      - "8090:8090"
+    environment:
+      - APP_MESSAGE=Welcome to the Course Application!
+    networks:
+      - db
+      - app
+    depends_on:
+      - redis
+      - dblite
+  redis:
+    image: "redis:alpine"
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    volumes:
+      - app-data:/data
+    networks:
+      - db
+    ports:
+      - "6379:6379"
+  dblite:
+    image: "klee/sqlite:3400100_ubuntu_jammy-20230126"
+    command: ["sleep", "infinity"]
+    environment:
+      - APP_DB_PATH=/data/app.db
+    networks:
+      - db
+    ports:
+      - "8080:8080"
+    volumes:
+      - dbl-data:/data
+
+networks:
+  default:
+    db: bridge
+    app: bridge
+
+volumes:
+  app-data:
+  dbl-data:
