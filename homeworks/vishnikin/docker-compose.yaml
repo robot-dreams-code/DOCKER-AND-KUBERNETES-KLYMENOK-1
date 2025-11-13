@@ -1,0 +1,19 @@
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+  db:
+    image: postgres:latest
+    environment:
+      postgres_user: user
+      postgres_password: password
+      postgres_db: mydb
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+  db_network:
+    driver: bridge  
