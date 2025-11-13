@@ -3,7 +3,7 @@
 
 ## Build image
 ```bash
-docker build --no-cache -t lesson-04:1.0.0  -f homeworks/oleksii_yuriev/module-2/lesson-04/Dockerfile apps/course-app                    10s
+docker build --no-cache -t lesson-05:1.0.0  -f homeworks/oleksii_yuriev/module-2/lesson-05/Dockerfile apps/course-app                    10s
 [+] Building 9.5s (11/11) FINISHED                                                                                                                                                           docker:rancher-desktop
  => [internal] load build definition from Dockerfile                                                                                                                                                           0.0s
  => => transferring dockerfile: 362B                                                                                                                                                                           0.0s
