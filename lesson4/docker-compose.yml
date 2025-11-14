@@ -1,0 +1,18 @@
+services:
+    course-app:
+        image: 
+            course-app:0.2
+        environment:
+           APP_STORE: redis
+           APP_REDIS_URL: redis://memory-cache:6379/0 
+           APP_MESSAGE: "hello world)"
+        depends_on:
+            - memory-cache
+        ports: 
+            - "127.0.0.1:8080:8080"
+
+    memory-cache:
+        image:
+            redis
+        ports:
+            - "127.0.0.1:6379:6379"
