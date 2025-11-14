@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: ../../../../apps/course-app
+      dockerfile: ../../homeworks/andrii_kharkovyi/module-2/lesson-04/Dockerfile
+    container_name: course-app-andrii_kharkovyi
+    ports:
+      - "8181:8080"
+    environment:
+      APP_MESSAGE: "Course App by Andrii Kharkovyi"
+      APP_STORE: "sqlite"
+      APP_DB_PATH: "/data/app.db"
+      APP_REDIS_URL: "redis://redis:6379/0"
+    volumes:
+      - app-data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - course-network-akharkovyi
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthz" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: course-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - course-network-akharkovyi
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  app-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  course-network-akharkovyi:
+    driver: bridge
