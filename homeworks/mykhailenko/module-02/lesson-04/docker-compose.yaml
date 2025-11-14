@@ -1,0 +1,30 @@
+name: course-app
+
+services:
+  app:
+    image: mmykhailenko/lesson-04:dev
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    networks:
+      - cache
+    depends_on:
+      - redis
+    env_file:
+      .env
+
+  redis:
+    image: redis:8.2.3-alpine3.22
+    networks:
+      - cache
+    volumes:
+      - redis_cache:/data
+
+networks:
+  cache:
+    driver: bridge
+
+volumes:
+  redis_cache:
+

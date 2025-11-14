@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN addgroup -S deploy && adduser -S deploy -G deploy
 
-RUN mkdir /data && chown deploy:deploy /data
+RUN mkdir /app/data && chown deploy:deploy /app/data
 
 RUN --mount=type=bind,source=requirements.txt,target=/app/requirements.txt,readonly pip install -r /app/requirements.txt
 
