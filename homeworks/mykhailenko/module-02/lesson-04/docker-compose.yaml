@@ -16,6 +16,7 @@ services:
 
   redis:
     image: redis:8.2.3-alpine3.22
+    command: [ "redis-server", "--save", "60", "1" ]
     networks:
       - cache
     volumes:
