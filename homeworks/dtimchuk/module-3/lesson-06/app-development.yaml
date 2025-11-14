@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: dtimchuk-dev
+  labels:
+    app: course-app
+    env: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+        env: development
+    spec:
+      containers:
+      - name: course-app
+        image: dmitrytimchuk/course-app:latest
+        ports:
+        - containerPort: 8080
+          name: http
