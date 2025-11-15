@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build: ../../../../apps/course-app
+    container_name: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=Привіт з Docker Compose!
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - course-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: course-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - course-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+networks:
+  course-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
