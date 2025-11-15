@@ -3,7 +3,7 @@ services:
   web:
     build:
       context: ../../../../apps/course-app
-      dockerfile: ../../homeworks/artemkolbasa/lesson-04/Dockerfile
+      dockerfile: ../../homeworks/artemkolbasa/lesson-04/course-app/Dockerfile
     image: course-app
     ports:
       - "8080:8080"
