@@ -1,0 +1,23 @@
+# Ignore common version control directories
+.git
+.svn
+.hg
+
+# Ignore common build and dependency management directories/files
+node_modules/
+vendor/
+target/
+build/
+dist/
+*.log
+*.tmp
+*.bak
+
+# Ignore environment-specific or sensitive files
+.env
+.DS_Store
+npm-debug.log*
+
+# Ignore Docker-related files that are not part of the build context
+Dockerfile
+.dockerignore
