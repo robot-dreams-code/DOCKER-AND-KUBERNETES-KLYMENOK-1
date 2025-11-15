@@ -291,23 +291,11 @@ async def add_request_id(request: Request, call_next):
     response.headers["X-Request-ID"] = req_id
     return response
 
-## @app.on_event("startup")
-## def on_startup():
-##     store.init()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Code to run on startup
-    print("Application startup!")
-    yield
-    # Code to run on shutdown
-    print("Application shutdown!")
+@app.on_event("startup")
+def on_startup():
+    store.init()
 
-app = FastAPI(lifespan=lifespan)
-
-## @app.get("/")
-## async def read_root():
-##    return {"message": "Hello World"}
 
 @app.get("/", response_class=HTMLResponse)
 def index():
