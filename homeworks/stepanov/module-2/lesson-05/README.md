@@ -69,3 +69,4 @@ docker service scale lesson05_app=3
 The real issue here is that **Rancher Desktop's Docker Swarm implementation doesn't properly expose ingress ports when using overlay networks** (this is a known limitation with Lima-based Docker setups)
 
 Типу, воно все працює, все запускається, репліки раняться. Але я не можу з локалі достукатися до апки. Не еспоузиться порт нормально в інгрес моді
+Ну А, ну і + прекол з env змінними, про який я написав в слеку
