@@ -44,3 +44,5 @@ docker inspect --format='{{json .State.Health}}' container | jq
   ]
 }
 ```
+
+Протестив роботу вольюма. Накляцав візітів, зробив docker compose down -v і без -v. Якщо вольюми не дропати, то візити зберігаються)
