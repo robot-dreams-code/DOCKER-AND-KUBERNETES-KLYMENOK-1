@@ -46,3 +46,26 @@ docker inspect --format='{{json .State.Health}}' container | jq
 ```
 
 Протестив роботу вольюма. Накляцав візітів, зробив docker compose down -v і без -v. Якщо вольюми не дропати, то візити зберігаються)
+
+SWAAAAAAARM
+
+Заінітів вот так 
+docker swarm init --advertise-addr 127.0.0.1
+
+Я не пушив імедж в репозиторій, я просто збілдив локально і засетив в докер композ (docker-compose-swarm.yml)
+
+Далі задеплоїв 
+docker stack deploy -c stack.yml lesson05
+
+Подивився інфу
+docker stack ls
+docker stack services lesson05
+
+Там була лише одна репліка, тому я заранив
+docker service scale lesson05_app=3
+
+І воно не спрацювало. Я трохи побавився, шоб запустити в інгрес моді. Але як мені сказала АІшка
+
+The real issue here is that **Rancher Desktop's Docker Swarm implementation doesn't properly expose ingress ports when using overlay networks** (this is a known limitation with Lima-based Docker setups)
+
+Типу, воно все працює, все запускається, репліки раняться. Але я не можу з локалі достукатися до апки. Не еспоузиться порт нормально в інгрес моді
