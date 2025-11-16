@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app
+spec:
+  type: NodePort
+  selector:
+    app: course-app
+  ports:
+    - port: 8080        # порт сервісу у кластері
+      targetPort: 8080  # порт у контейнері
+      nodePort: 30080   # порт на хості

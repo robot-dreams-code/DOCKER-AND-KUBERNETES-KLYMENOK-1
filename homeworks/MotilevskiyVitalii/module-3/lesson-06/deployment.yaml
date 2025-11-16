@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: motilevskiy/course-app:1.0
+          imagePullPolicy: Always # Завжди скачувати image з репозиторія (використовувати тільки для розробки)
+          ports:
+            - containerPort: 8080
+          readinessProbe: # перевірка чи готова пода отримувати трафік
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe: # перевірка чи живий контейнер ()
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
