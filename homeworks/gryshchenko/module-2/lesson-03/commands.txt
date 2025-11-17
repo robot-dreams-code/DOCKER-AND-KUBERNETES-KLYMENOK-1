@@ -1,0 +1,16 @@
+# Збираємо образ
+docker build -f ../Dockerfile -t simple-app:v3 .
+
+docker build -t simple-app:latest .
+
+# Запускаємо локально, відкриваючи порт 8080
+docker run -p 8080:8080 simple-app:latest
+
+# push to dockerhub
+docker login
+docker tag simple-app:latest username/simple-go-app:v5
+docker push username/simple-go-app:v5
+
+# run from dockerhub
+docker rmi -f $(docker images -q)
+docker run -p 8080:8080 username/simple-go-app:v5
