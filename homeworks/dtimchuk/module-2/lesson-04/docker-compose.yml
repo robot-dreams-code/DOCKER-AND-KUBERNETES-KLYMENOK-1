@@ -26,7 +26,6 @@ services:
       - common-network
     volumes:
       - app-data:/app/data
-
   dragonfly:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
     container_name: dragonfly
@@ -38,11 +37,9 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    restart: unless-stopped
-    networks:
-      - common-network
     volumes:
       - dragonfly-data:/data
+    restart: unless-stopped
 
 networks:
   common-network:
