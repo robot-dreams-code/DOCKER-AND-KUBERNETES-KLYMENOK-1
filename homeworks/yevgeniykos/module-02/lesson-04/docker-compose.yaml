@@ -1,5 +1,6 @@
 services:
   app:
+
     image: "course-app:1.0.5"
     ports:
       - "8080:8080"
@@ -10,6 +11,7 @@ services:
       - app
     depends_on:
       - redis
+
 
   redis:
     image: "redis:alpine"
@@ -23,12 +25,21 @@ services:
     ports:
       - "6379:6379"
 
+
 networks:
   default:
   db:
     driver: bridge
   app:
     driver: bridge
+
+volumes:
+  app-data:
+
+networks:
+  default:
+    db: bridge
+    app: bridge
 
 volumes:
   app-data:
