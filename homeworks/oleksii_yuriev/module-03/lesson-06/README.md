@@ -1,27 +1,20 @@
 # Simple App 🐳
 
 
-## Build image
+## Push image to docker hub
 ```bash
-docker build --no-cache -t lesson-05:1.0.0  -f homeworks/oleksii_yuriev/module-2/lesson-05/Dockerfile apps/course-app
-[+] Building 10.6s (11/11) FINISHED                                                                                                                                                          docker:rancher-desktop
- => [internal] load build definition from Dockerfile                                                                                                                                                           0.0s
- => => transferring dockerfile: 362B                                                                                                                                                                           0.0s
- => [internal] load metadata for docker.io/library/python:3.14-alpine3.22                                                                                                                                      1.1s
- => [internal] load .dockerignore                                                                                                                                                                              0.0s
- => => transferring context: 2B                                                                                                                                                                                0.0s
- => [1/6] FROM docker.io/library/python:3.14-alpine3.22@sha256:8373231e1e906ddfb457748bfc032c4c06ada8c759b7b62d9c73ec2a3c56e710                                                                                0.0s
- => [internal] load build context                                                                                                                                                                              0.0s
- => => transferring context: 121B                                                                                                                                                                              0.0s
- => CACHED [2/6] WORKDIR /app                                                                                                                                                                                  0.0s
- => [3/6] COPY requirements.txt .                                                                                                                                                                              0.0s
- => [4/6] RUN pip install -r requirements.txt                                                                                                                                                                  7.5s
- => [5/6] COPY . .                                                                                                                                                                                             0.0s
- => [6/6] RUN adduser -D -u 1000 appuser      && chown -R appuser:appuser /app      &&  apk update && apk add curl                                                                                             1.7s
- => exporting to image                                                                                                                                                                                         0.2s
- => => exporting layers                                                                                                                                                                                        0.2s
- => => writing image sha256:16aa052fa132e335e8576527c219372239e7e1cf97ef82a086399014df475bca                                                                                                                   0.0s
- => => naming to docker.io/library/lesson-05:1.0.0
+docker push yurievac/lesson-06:latest                                                                                                                                                                  28s
+The push refers to repository [docker.io/yurievac/lesson-06]
+1629e2a0b9ea: Pushed
+8332f7a7e79b: Pushed
+29fb752b176c: Pushed
+640d3b83e65d: Pushed
+2012aa1be4bf: Pushed
+4a6d96fd2053: Mounted from library/python
+2e2676b7c8f7: Mounted from library/python
+ff2fefea59ce: Mounted from library/python
+0e64f2360a44: Mounted from library/redis
+latest: digest: sha256:eed120ff15a04115ce6d5aa25c1e24e83972839925a3bf3a89a147d8699eb453 size: 2201
 ```
 
 ## Deploy Deployments & Services
