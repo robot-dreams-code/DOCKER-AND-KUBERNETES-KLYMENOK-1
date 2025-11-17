@@ -11,8 +11,12 @@ services:
     environment:
       - APP_STORE=redis
       - APP_REDIS_URL=redis://dragonfly:6379/0
+    depends_on:
+        dragonfly:
+            condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      # use readyz endpoint to check if app is ready and dragonfly is connected
+      test: ["CMD", "curl", "-f", "http://localhost:8080/readyz"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -20,16 +24,29 @@ services:
     restart: unless-stopped
     networks:
       - common-network
-
+    volumes:
+      - app-data:/app/data
   dragonfly:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
     container_name: dragonfly
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "localhost", "-p", "6379", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - dragonfly-data:/data
     restart: unless-stopped
-    networks:
-      - common-network
 
 networks:
   common-network:
     driver: bridge
+
+volumes:
+  app-data:
+    driver: local
+  dragonfly-data:
+    driver: local

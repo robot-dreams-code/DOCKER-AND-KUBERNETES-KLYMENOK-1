@@ -6,6 +6,9 @@ LABEL lesson="lesson-04"
 
 WORKDIR /usr/src/app
 
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
 # copy requirements.txt for cache layer
 COPY apps/course-app/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
