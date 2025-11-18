@@ -1,0 +1,19 @@
+version: "3"
+services:
+  web:
+    build:
+      context: ../../../../apps/course-app
+      dockerfile: ../../homeworks/artemkolbasa/lesson-04/Dockerfile
+    image: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      APP_STORE: "redis"
+      APP_REDIS_URL: "redis://redis:6379/0"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"

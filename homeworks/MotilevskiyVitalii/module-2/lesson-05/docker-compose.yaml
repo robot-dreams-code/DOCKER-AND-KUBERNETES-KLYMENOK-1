@@ -1,0 +1,32 @@
+services:
+  python:
+    image: motilevskiy/course-app:1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - APP_MESSAGE="Welcome to the Course App"
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthz" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - appdata:/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+volumes:
+  appdata:

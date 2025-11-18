@@ -1,0 +1,39 @@
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+  app:
+    image: course-app:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+  redis:
+    image: redis:latest
+    networks:
+      - backend
+      - db_network
+    environment:
+      redis_user: user
+      redis_password: password
+      redis_db: mydb
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+  db_network:
+    driver: bridge

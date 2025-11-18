@@ -1,0 +1,10 @@
+# Ignore git repo files
+.git
+.gitignore
+
+# Ignore OS or editor files
+*.log
+*.tmp
+*.swp
+*.md
+.DS_Store
