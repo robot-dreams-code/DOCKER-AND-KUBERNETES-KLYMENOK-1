@@ -1,0 +1,34 @@
+services:
+  course-app:
+    build:
+      context: ./apps/course-app
+    image: course-app:local
+    container_name: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - course-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: course-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - course-net
+
+volumes:
+  redis-data:
+
+networks:
+  course-net:
+    driver: bridge
