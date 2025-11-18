@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    container_name: capp
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_started
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    healthcheck:
+      test: [ "CMD", "curl -f http://localhost:8080/healthz || exit 1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: capp_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - appdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  appdata: {}
