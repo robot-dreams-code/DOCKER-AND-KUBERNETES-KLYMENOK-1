@@ -5,7 +5,7 @@
 ```bash
 docker build \
   -t course-app:1.0.0 \
-  -f homeworks/klymenko-oleksandr/module-2/lesson-06/Dockerfile \
+  -f homeworks/klymenko-oleksandr/module-3/lesson-06/Dockerfile \
   apps/course-app
 ```
 
@@ -29,7 +29,7 @@ docker push $DOCKER_USER/course-app:1.0.0
 
 ```bash
 kubectl create namespace dev
-kubectl apply -n dev -f homeworks/klymenko-oleksandr/module-2/lesson-06/k8s/
+kubectl apply -n dev -f homeworks/klymenko-oleksandr/module-3/lesson-06/k8s/
 ```
 
 ### Перевірка
