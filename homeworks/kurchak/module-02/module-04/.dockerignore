@@ -1,0 +1,32 @@
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Virtual environments ---
+venv/
+.venv/
+
+# --- Git files ---
+.git/
+.gitignore
+
+# --- IDE & editor configs ---
+.idea/
+.vscode/
+
+# --- Build / distribution directories ---
+dist/
+build/
+*.egg-info/
+
+# --- OS specific files ---
+.DS_Store
+
+# --- Logs ---
+*.log
+
+# --- Docker stuff ---
+Dockerfile
+docker-compose.yml
