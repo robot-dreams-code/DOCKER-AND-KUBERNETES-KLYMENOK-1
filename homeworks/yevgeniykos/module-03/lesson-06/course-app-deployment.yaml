@@ -20,10 +20,10 @@ spec:
           image: rdlsolutions/course-app:1.0.5
           resources:
             requests:
-              cpu: "200m"  
-              memory: "256Mi" 
+              cpu: "100m"  
+              memory: "64Mi" 
             limits:
-              cpu: "500m"  
+              cpu: "200m"  
               memory: "512Mi" 
           ports:
             - containerPort: 8080
@@ -31,7 +31,7 @@ spec:
             - name: APP_MESSAGE
               value: "Welcome to the Course Application!"
             - name: APP_REDIS_URL
-              value: "redis://redis:6379/0"
+              value: "redis://redis:30079/0"
             - name: APP_DB_PATH
               value: "/data/app.db"
             - name: APP_STORE
@@ -39,24 +39,10 @@ spec:
             - name: REDIS_HOST
               value: redis
             - name: REDIS_PORT
-              value: "6379" 
+              value: "30079" 
           volumeMounts:
             - name: dbl-data
               mountPath: /data
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 3
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 20
-            periodSeconds: 20
-            timeoutSeconds: 5
       volumes:
         - name: dbl-data
           persistentVolumeClaim:

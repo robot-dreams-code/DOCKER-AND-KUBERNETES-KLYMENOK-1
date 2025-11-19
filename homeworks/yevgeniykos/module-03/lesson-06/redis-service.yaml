@@ -4,9 +4,10 @@ metadata:
   name: redis
   namespace: mod03-less06
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
-    component: redis
+    app: redis
   ports:
     - port: 6379
       targetPort: 6379
+      nodePort: 30079

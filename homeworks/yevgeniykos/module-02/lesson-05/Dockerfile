@@ -37,4 +37,4 @@ ENV APP_REDIS_URL=redis://redis:6379/0
 ENV APP_MESSAGE="Welcome to the Course Application!"
 
 # Run your Python application
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "30079"]
