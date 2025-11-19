@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: ../../..
+      dockerfile: ./homeworks/v.voitenko/lesson-05/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - APP_MESSAGE="Welcome to the Course App"
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - appdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+volumes:
+  appdata:
