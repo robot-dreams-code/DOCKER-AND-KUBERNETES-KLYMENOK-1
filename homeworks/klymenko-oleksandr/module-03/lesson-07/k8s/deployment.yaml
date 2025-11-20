@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: course-app
-          image: kyle21/course-app:1.0.0
+          image: kyle21/course-app:1.0.1
           ports:
             - containerPort: 8080
           env:

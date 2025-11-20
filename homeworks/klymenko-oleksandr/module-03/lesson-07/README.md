@@ -1,5 +1,29 @@
 # Homework: Module 03 / Lesson 07
 
+### Збірка Dockerfile
+
+```bash
+docker build \
+  -t course-app:1.0.1 \
+  -f homeworks/klymenko-oleksandr/module-03/lesson-07/Dockerfile \
+  apps/course-app
+```
+
+# Тег Docker Hub
+
+```bash
+export DOCKER_USER=kyle21
+docker tag course-app:1.0.1 $DOCKER_USER/course-app:1.0.1
+```
+
+### Логін та push
+
+```bash
+docker login
+docker push $DOCKER_USER/course-app:1.0.1
+```
+
+
 ### Запуск kubernets
 
 ```bash

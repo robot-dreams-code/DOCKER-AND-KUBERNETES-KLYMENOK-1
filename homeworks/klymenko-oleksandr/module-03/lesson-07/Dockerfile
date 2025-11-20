@@ -1,13 +1,5 @@
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
-
-ENV APP_STORE=sqlite \
-    APP_DB_PATH=/data/app.db \
-    APP_MESSAGE="Welcome to the Course App"
-
 WORKDIR /app
 
 RUN apt-get update && \
