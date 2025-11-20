@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lesson-7
+  labels:
+    app: lesson-7
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: lesson-7
+  template:
+    metadata:
+      name: lesson-7
+      labels:
+        app: lesson-7
+    spec:
+      containers:
+        - name: lesson-7
+          image: vitaliyavramenko/lesson-6:1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: lesson-7
+                  key: APP_MESSAGE
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10
+      maxSurge: 10
