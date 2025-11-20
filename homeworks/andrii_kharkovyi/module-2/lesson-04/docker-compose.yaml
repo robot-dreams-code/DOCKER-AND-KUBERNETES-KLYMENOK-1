@@ -4,6 +4,7 @@ services:
       context: ../../../../apps/course-app
       dockerfile: ../../homeworks/andrii_kharkovyi/module-2/lesson-04/Dockerfile
     container_name: course-app-andrii_kharkovyi
+    image: course-app-andrii:latest
     ports:
       - "8181:8080"
     environment:

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-redis
+  labels:
+    app: course-redis
+spec:
+  type: ClusterIP
+  selector:
+    app: course-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
