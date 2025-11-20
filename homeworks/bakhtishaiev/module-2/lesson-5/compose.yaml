@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redislabs/redismod
+    ports:
+      - "6379:6379"
+    volumes: 
+      - sample_app:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 1s
+      retries: 3
+  web:
+    image: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+    healthcheck: 
+      test: ["CMD", "curl", "-f", "http://localhostt:8080/healthz"]
+      interval: 3s
+      timeout: 1s
+      retries: 3
+    depends_on:
+      redis:
+        condition: service_healthy
+volumes:
+  sample_app:
