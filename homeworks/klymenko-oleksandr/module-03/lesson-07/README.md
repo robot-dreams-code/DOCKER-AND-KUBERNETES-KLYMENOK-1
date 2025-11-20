@@ -1,35 +1,10 @@
 # Homework: Module 03 / Lesson 07
 
-### Збірка Dockerfile
-
-```bash
-docker build \
-  -t course-app:1.0.0 \
-  -f homeworks/klymenko-oleksandr/module-3/lesson-07/Dockerfile \
-  apps/course-app
-```
-
-# Тег Docker Hub
-
-```bash
-export DOCKER_USER=ЛОГИН_DOCKER_HUB
-docker tag course-app:1.0.0 $DOCKER_USER/course-app:1.0.0
-```
-
-### Логін та push
-
-```bash
-docker login
-docker push $DOCKER_USER/course-app:1.0.0
-```
-
-
-
 ### Запуск kubernets
 
 ```bash
 kubectl create namespace dev
-kubectl apply -n dev -f homeworks/klymenko-oleksandr/module-3/lesson-07/k8s/
+kubectl apply -n dev -f homeworks/klymenko-oleksandr/module-03/lesson-07/k8s/
 ```
 
 ### Перевірка
