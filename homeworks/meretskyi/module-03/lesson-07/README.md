@@ -132,13 +132,14 @@ course-app-deployment-64985466d9-r5b9f   1/1     Running   0          2m39s
 
 
 5. Змінив на Recreate
+```
 
 kyrylich@Kyrylos-Laptop lesson-07 % k apply -f dev -n course-app-dev
 configmap/course-app-config-map unchanged
 deployment.apps/course-app-deployment configured
 namespace/course-app-dev unchanged
 service/course-app-svc unchanged
-kyrylich@Kyrylos-Laptop lesson-07 % ls                              
+
 kyrylich@Kyrylos-Laptop lesson-07 %  k get pods -n course-app-dev
 
 NAME                                     READY   STATUS        RESTARTS   AGE
@@ -175,7 +176,7 @@ course-app-deployment-6597d99597-vgdt2   1/1     Running   0          5s
 course-app-deployment-6597d99597-vl8jf   1/1     Running   0          5s
 course-app-deployment-6597d99597-x64q4   1/1     Running   0          5s
 course-app-deployment-6597d99597-xt5gw   1/1     Running   0          5s
-
+```
 
 
 Rolling Update
