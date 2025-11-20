@@ -1,0 +1,49 @@
+services:
+  course-app:
+    image: hbvhuwe/lesson-05-course-app:latest
+    depends_on:
+      - database
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=Hello World!
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://database:6379/0
+    networks:
+      - app
+      - database
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  database:
+    image: redis:8.2.3
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role==manager"
+    volumes:
+      - appdata:/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  appdata:
+
+networks:
+  app:
+    driver: overlay
+  database:
+    driver: overlay

@@ -1,0 +1,41 @@
+services:
+  course-app:
+    build:
+      context: ../../../../apps/course-app/
+      dockerfile: ../../homeworks/chornonoh/module-02/lesson-05/Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=Hello World!
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://database:6379/0
+    networks:
+      - app
+      - database
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  database:
+    image: redis:8.2.3
+    volumes:
+      - appdata:/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  appdata:
+
+networks:
+  app:
+  database:
