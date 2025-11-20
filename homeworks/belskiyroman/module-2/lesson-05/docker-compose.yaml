@@ -22,7 +22,7 @@ services:
       - redis_conf:/usr/local/etc/redis
       - redis_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      test: ["CMD-SHELL", "redis-cli ping"]
 
 volumes:
   redis_conf:
