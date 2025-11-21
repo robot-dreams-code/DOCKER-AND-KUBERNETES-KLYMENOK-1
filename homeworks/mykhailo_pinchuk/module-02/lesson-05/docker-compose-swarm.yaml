@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  python:
+    image: my-python-app:latest
+    ports:
+      - "8080:80"
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+      APP_MESSAGE: Welcome to the Course Application!
+    networks:
+      - app-network
+#    healthcheck:
+#      test: ["CMD", "curl", "-fs", "http://localhost:80/healthz"]
+#      interval: 15s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 30s
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  app-network:
+    driver: overlay
+
+volumes:
+  redis_data:
