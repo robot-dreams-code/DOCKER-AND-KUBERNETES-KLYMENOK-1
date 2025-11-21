@@ -1,0 +1,9 @@
+FROM golang:1.23 AS build
+WORKDIR /src
+COPY ./apps/simple-app .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/simple-app ./main.go
+EXPOSE 8080
+
+FROM scratch
+COPY --from=build /bin/simple-app /bin/simple-app
+CMD ["/bin/simple-app"]

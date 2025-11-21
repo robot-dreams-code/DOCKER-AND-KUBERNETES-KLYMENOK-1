@@ -8,6 +8,9 @@ services:
     image: nginx:latest
     ports:
       - "8098:8098"
+    image: nginx:latest
+    ports:
+      - "80:80"
     networks:
       - frontend
   app:
