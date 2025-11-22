@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: file-course-app-configmap
+    namespace: homework
+data:
+    start.sh: |
+        #!/bin/sh
+        echo "Hello from ConfigMap script!"
+        echo "This is running inside the container."
