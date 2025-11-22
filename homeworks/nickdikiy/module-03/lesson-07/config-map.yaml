@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: course-app-configmap
+    namespace: homework
+data:
+    APP_NAME: "course-app-3"
