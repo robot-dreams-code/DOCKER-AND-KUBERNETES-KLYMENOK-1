@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-config-motilevskiy
+data:
+  TEST_KEY_1: "tesKeyName1"
+  TEST_KEY_2: "tesKeyName2"
+  TEST_KEY_3: "tesKeyName3"
