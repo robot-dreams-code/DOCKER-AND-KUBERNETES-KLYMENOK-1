@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: ../../../../apps/course-app
+      dockerfile: ../../homeworks/dmytrokain/module02/lesson04/Dockerfile
+    container_name: course_app
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthz" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
