@@ -5,7 +5,7 @@ metadata:
   labels:
     app: course-app-motilevskiy
 spec:
-  replicas: 6
+  replicas: 3
   selector:
     matchLabels:
       app: course-app-motilevskiy
@@ -40,12 +40,16 @@ spec:
               port: 8080
             initialDelaySeconds: 3
             periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           livenessProbe: # перевірка чи живий контейнер
             httpGet:
               path: /healthz
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
       restartPolicy: Always
   strategy:
     type: RollingUpdate
