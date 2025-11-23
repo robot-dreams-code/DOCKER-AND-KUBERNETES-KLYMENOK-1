@@ -1,5 +1,18 @@
-# Deployment Strategies in Kubernetes
 
+## Створення Namespace
+
+створюємо namespace:
+```bash
+kubectl apply -f namespace.yml
+```
+
+## Деплой ресурсів
+
+Застосуємо всі конфігураційні файли (ConfigMap, Deployment, Service):
+```bash
+kubectl apply -f .
+```
+# Deployment Strategies in Kubernetes
 ## RollingUpdate (Default)
 ### Конфігурація:
 ```yaml
@@ -125,4 +138,11 @@ course-app-deployment-7bc876bd88-rkcp6   0/1     Completed           0          
 course-app-deployment-7bc876bd88-rkcp6   0/1     Completed           0              61s
 course-app-deployment-7bc876bd88-pqpl6   0/1     Completed           0              59s
 course-app-deployment-7bc876bd88-pqpl6   0/1     Completed           0              59s
+```
+
+## Очищення ресурсів
+
+видаляємо ресурси:
+```bash
+kubectl delete -f .
 ```
