@@ -1,0 +1,19 @@
+FROM python:3.12-slim AS builder
+WORKDIR /app
+
+ARG APP_DIR="apps/course-app"
+
+COPY $APP_DIR/requirements.txt ./
+RUN pip install --no-cache-dir --prefix=/deps -r requirements.txt
+
+FROM python:3.12-slim
+WORKDIR /app
+
+USER 1000
+ARG APP_DIR="apps/course-app"
+
+COPY --from=builder /deps /usr/local
+COPY $APP_DIR/ .
+
+EXPOSE 8080
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
