@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: robotdreams
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      initContainers:
+        - name: init-redis-check
+          image: busybox:1.36
+          command: ['sh','-c', 'until nslookup redis-sv.robotdreams.svc.cluster.local; do echo "waiting for redis FQDN"; sleep 2; done;']
+      containers:
+        - name: course-app
+          image: yarovskiy/course-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+             requests:
+               cpu: 125m
+               memory: 64Mi
+             limits:
+               cpu: 250m
+               memory: 128Mi
+          env:
+            - name: APP_STORE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_STORE
+            - name: APP_REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_REDIS_URL
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_MESSAGE
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1

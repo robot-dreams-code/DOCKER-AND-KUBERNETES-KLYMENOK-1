@@ -1,0 +1,31 @@
+services:
+    python:
+        build:
+            dockerfile: ../../homeworks/nickdikiy/module-02/lesson-04/Dockerfile
+            context: ../../../../apps/course-app
+        ports:
+            - "8080:8080"
+        depends_on:
+            redis:
+                condition: service_healthy
+        environment:
+            - APP_MESSAGE=DC passed message
+            - APP_STORE=redis
+            - APP_REDIS_URL=redis://redis:6379/0
+
+    redis:
+        image: redis:latest
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 3s
+            timeout: 2s
+            retries: 3
+        volumes:
+            - redis-data:/data
+        ports:
+            - "6379:6379"
+        command: [ "redis-server", "--appendonly", "yes" ]
+        restart: unless-stopped
+
+volumes:
+    redis-data:
