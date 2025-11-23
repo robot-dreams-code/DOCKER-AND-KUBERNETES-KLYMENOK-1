@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-svc
+  namespace: course-app-dev
+spec:
+  selector:
+    app: course-app
+  type: NodePort
+  ports:
+    - name: course-app
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-course-app-svc
+  namespace: course-app-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-course-app
+  ports:
+  - protocol: TCP
+    port: 6379
+    targetPort: 6379
