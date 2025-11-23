@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  course-app:
+    build:
+      context: ../../../       # <-- from compose dir to app dir
+      dockerfile: homeworks/ypodop/module2-lesson5/Dockerfile
+    image: course-app:local
+    ports:
+      - "8080:8080"
+    environment:
+      APP_MESSAGE: "Welcome to the Course App (Compose)"
+      APP_STORE: "redis"
+      APP_REDIS_URL: "redis://redis:6379/0"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      # Use Python (already in the image) to probe /healthz inside the container
+      test: ["CMD-SHELL", "python - <<'PY'\nimport sys,urllib.request\nu='http://localhost:8080/healthz'\ntry:\n  with urllib.request.urlopen(u, timeout=2) as r:\n    sys.exit(0 if r.status==200 else 1)\nexcept Exception:\n  sys.exit(1)\nPY"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "yes"]
+    volumes:
+      - ./redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 3s
