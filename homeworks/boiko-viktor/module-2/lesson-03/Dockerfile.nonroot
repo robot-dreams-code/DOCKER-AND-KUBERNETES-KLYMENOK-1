@@ -1,0 +1,23 @@
+ARG GO_VERSION=1.23
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
+WORKDIR /src
+# Без цієї змінної не працює імедж скретч
+ENV CGO_ENABLED=0 
+
+# копіюємо залежності
+COPY go.mod go.sum ./
+# завантажуємо залежності (цей шар кешуватиметься, якщо go.mod/go.sum не змінюються)
+RUN go mod download
+
+# копіюємо весь код
+COPY . .
+
+# збірка апки
+RUN go build -o app main.go
+
+#запуск в контейнері з nonroot
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /app
+COPY --from=build /src/app /bin/app
+USER nonroot:nonroot
+CMD ["/bin/app"]
