@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: course-app-motilevskiy
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: course-app-motilevskiy
   ports:
     - port: 8080        # порт сервісу у кластері
       targetPort: 8080  # порт у контейнері
-      nodePort: 30080   # порт на хості
