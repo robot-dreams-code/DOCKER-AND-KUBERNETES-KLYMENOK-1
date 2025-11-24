@@ -1,24 +1,24 @@
-#Запушити зібраний імедж для apps/course-app у Docker Hub або GitHub Registry
-Використала demo.goharbor.io через обмежння корпоративного середовища
+#Р—Р°РїСѓС€РёС‚Рё Р·С–Р±СЂР°РЅРёР№ С–РјРµРґР¶ РґР»СЏ apps/course-app Сѓ Docker Hub Р°Р±Рѕ GitHub Registry
+Р’РёРєРѕСЂРёСЃС‚Р°Р»Р° demo.goharbor.io С‡РµСЂРµР· РѕР±РјРµР¶РЅРЅСЏ РєРѕСЂРїРѕСЂР°С‚РёРІРЅРѕРіРѕ СЃРµСЂРµРґРѕРІРёС‰Р°
 ##using demo.goharbor.io because of corporate restrictions
 docker login demo.goharbor.io
 docker tag course-app:v1.0 demo.goharbor.io/lesson06/course-app:v1.0
 docker push demo.goharbor.io/lesson06/course-app:v1.0
 
-#Задеплоїти ресурси в Rancher Desktop кластер
-##Перевірка 
+#Р—Р°РґРµРїР»РѕС—С‚Рё СЂРµСЃСѓСЂСЃРё РІ Rancher Desktop РєР»Р°СЃС‚РµСЂ
+##РџРµСЂРµРІС–СЂРєР° 
 ###kubectl get nodes
 NAME         STATUS   ROLES                  AGE   VERSION
 ho-pc02352   Ready    control-plane,master   17d   v1.33.5+k3s1
 
-##Задеплоїти ресурси
+##Р—Р°РґРµРїР»РѕС—С‚Рё СЂРµСЃСѓСЂСЃРё
 ###kubectl apply -f deployment.yaml
 deployment.apps/course-app created
 
 ###kubectl apply -f service.yaml
 service/course-app-nodeport created
 
-##Перевірка 
+##РџРµСЂРµРІС–СЂРєР° 
 ###kubectl get pods
 NAME                          READY   STATUS    RESTARTS   AGE
 course-app-7fb49bc4df-rvjqt   1/1     Running   0          2m21s
@@ -35,7 +35,7 @@ NAME         READY   UP-TO-DATE   AVAILABLE   AGE
 course-app   2/2     2            2           5m9s
 
 
-#Змінити кількість реплік у deployment.yaml, передеплоїти та подивитися на процес оновлення (kubectl rollout status deployment/<NAME>)
+#Р—РјС–РЅРёС‚Рё РєС–Р»СЊРєС–СЃС‚СЊ СЂРµРїР»С–Рє Сѓ deployment.yaml, РїРµСЂРµРґРµРїР»РѕС—С‚Рё С‚Р° РїРѕРґРёРІРёС‚РёСЃСЏ РЅР° РїСЂРѕС†РµСЃ РѕРЅРѕРІР»РµРЅРЅСЏ (kubectl rollout status deployment/<NAME>)
 ###kubectl apply -f deployment.yaml
 deployment.apps/course-app configured
 
