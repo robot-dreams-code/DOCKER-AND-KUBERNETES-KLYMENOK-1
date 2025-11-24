@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: course-app
+  template: 
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: avishnikin/k8s-sandbox:latest
+          ports:
+          - containerPort: 8089
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"

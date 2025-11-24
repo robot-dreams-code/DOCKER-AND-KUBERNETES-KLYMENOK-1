@@ -21,7 +21,7 @@ COPY --from=builder /etc/passwd /etc/passwd
 EXPOSE 8080
 
 USER appuser
-CMD [ "./main" ]
+CMD [ "./main.go" ]
 
 
 
