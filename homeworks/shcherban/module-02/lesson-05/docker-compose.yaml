@@ -1,0 +1,41 @@
+services:
+  backend:
+    image: app
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -I -X GET http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 30s
+      retries: 4
+    networks:
+      - backend
+      - database
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+  redis:
+    image: redis:8.0.5
+    healthcheck: 
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 4
+    networks:
+      - database
+    volumes:
+      - appdata:/data
+
+volumes:
+  appdata:
+    driver: local
+
+networks:
+  database:
+    driver: bridge
+  backend:
+    driver: bridge
+

@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+    name: course-app-tls
+spec:
+    secretName: course-app-tls
+    dnsNames:
+        - course-app.local
+    issuerRef:
+        name: selfsigned-issuer
+        kind: ClusterIssuer
