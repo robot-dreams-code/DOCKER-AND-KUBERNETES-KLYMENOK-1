@@ -17,6 +17,7 @@ kind: Service
 metadata:
   name: database-service
 spec:
+  type: ClusterIP
   selector:
     app: database
   ports:
