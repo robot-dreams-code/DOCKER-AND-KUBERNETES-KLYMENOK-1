@@ -7,6 +7,14 @@ Docker Compose (частина 2)
 1. Http запит на **/healthz** для web сервіса
 2. Виклик **Ping** для **redis** сервіса
 
+Для виклику http запиту, перед присвоєнням non-root юзера, додаємо в образ **curl**:
+
+`RUN apt-get update && apt-get install -y curl && \`
+
+`apt-get clean && rm -rf /var/lib/apt/lists/*`
+
+Викликаємо `apt-get clean` і видаляємо інші пакети що завантажив `apt-get update` щоб не збільшувати розмір runtime образу.
+
 Тестовий застосунок не є важким і запускається локально тому 
 для healthcheck я встановив **3 спроби** з **інтервалом** та **таймаутом** у **5 секунд**.
 
