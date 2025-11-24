@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: course-app-ingress
+    annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+    ingressClassName: traefik
+    tls:
+        -   hosts:
+                - course-app.local
+    rules:
+        - host: course-app.local
+          http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: course-app-svc
+                      port:
+                        name: http
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: course-app-ingress-secure
+    annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+    ingressClassName: traefik
+    tls:
+        -   hosts:
+                - course-app.local
+            secretName: course-app-tls
+    rules:
+        - host: course-app.local
+          http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: course-app-svc
+                      port:
+                        name: http
