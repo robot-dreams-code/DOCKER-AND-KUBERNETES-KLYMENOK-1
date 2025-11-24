@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app-deployment
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+            containers:
+                -   name: course-app
+                    image: nickdikiynd/course-app:1.0
+                    ports:
+                        -   containerPort: 8080
+                    livenessProbe:
+                        httpGet:
+                            path: /healthz
+                            port: 8080
+                        initialDelaySeconds: 15
+                        periodSeconds: 10
+                        failureThreshold: 3
+                        timeoutSeconds: 2
+                    readinessProbe:
+                        httpGet:
+                            path: /readyz
+                            port: 8080
+                        initialDelaySeconds: 5
+                        periodSeconds: 5
+                        failureThreshold: 3
+                        timeoutSeconds: 2
