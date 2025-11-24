@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: lesson-07
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: redis:8.4.0
+          ports:
+            - containerPort: 6379
+              name: database
+          volumeMounts:
+            - name: database-persistent-storage
+              mountPath: /data
+      volumes:
+        - name: database-persistent-storage
+          persistentVolumeClaim:
+            claimName: database-pv-claim
+  strategy:
+    type: Recreate
