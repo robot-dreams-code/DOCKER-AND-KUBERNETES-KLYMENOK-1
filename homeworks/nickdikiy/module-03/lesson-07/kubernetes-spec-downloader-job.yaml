@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: kubernetes-spec-downloader-job
+    namespace: homework
+spec:
+    ttlSecondsAfterFinished: 180
+    template:
+        spec:
+            containers:
+                -   name: kubernetes-spec-downloader-job
+                    image: curlimages/curl:8.2.1
+                    command:
+                        - sh
+                        - -c
+                        - |
+                            echo "Downloading Kubernetes OpenAPI spec..."
+                            curl -L -o /tmp/k8s-swagger.json https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json
+                            echo "Download finished!"
+            restartPolicy: Never
