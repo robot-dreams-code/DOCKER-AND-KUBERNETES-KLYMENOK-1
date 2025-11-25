@@ -1,13 +1,9 @@
-FROM golang:1.23.3 AS builder
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o simple-app ./
+FROM python:3.12-slim
 
-FROM scratch
 WORKDIR /app
-COPY --from=builder /src/simple-app /app/simple-app
-USER 1000
-EXPOSE 8080
-ENTRYPOINT ["/app/simple-app"]
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
