@@ -26,7 +26,10 @@ APP_MESSAGE = os.getenv("APP_MESSAGE", "Welcome to the Course App")
 SECRET_TOKEN = os.getenv("APP_SECRET_TOKEN", "")
 STORE_BACKEND = os.getenv("APP_STORE", "sqlite").lower()
 DB_PATH = os.getenv("APP_DB_PATH", "data/data.sql")
-REDIS_URL = os.getenv("APP_REDIS_URL", "redis://localhost:6379/0")
+REDIS_HOST = os.getenv("APP_REDIS_HOST","localhost")
+REDIS_PORT = int(os.getenv("APP_REDIS_PORT","6379"))
+#REDIS_URL = os.getenv("APP_REDIS_URL", "redis://localhost:6379/0")
+REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
 MESSAGES_API = os.getenv("APP_MESSAGES_API", "").rstrip("/")
 COUNTER_API = os.getenv("APP_COUNTER_API", "").rstrip("/")
 HOSTNAME = socket.gethostname()
@@ -142,7 +145,7 @@ class RedisStore(Store):
         if redis is None:
             raise RuntimeError("redis package not installed")
         # decode_responses=True to work with strings
-        self.client = redis.Redis.from_url(url, decode_responses=True)
+        self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True, socket_connect_timeout=3)
 
     def init(self) -> None:
         # nothing to initialize schema-wise
