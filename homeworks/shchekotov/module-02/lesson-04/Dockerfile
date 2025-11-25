@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /app
 
 ARG APP_DIR="apps/course-app"
@@ -6,7 +6,7 @@ ARG APP_DIR="apps/course-app"
 COPY $APP_DIR/requirements.txt ./
 RUN pip install --no-cache-dir --prefix=/deps -r requirements.txt
 
-FROM python:3.12-slim
+FROM python:3.14-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y curl && \
