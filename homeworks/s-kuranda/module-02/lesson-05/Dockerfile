@@ -7,7 +7,7 @@ LABEL maintainer="Serhii Kuranda" \
       project="Robot Dreams :: Lesson 04"
 
 RUN apk update && \
-    apk add curl jq && \
+    apk add curl jq bash && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
