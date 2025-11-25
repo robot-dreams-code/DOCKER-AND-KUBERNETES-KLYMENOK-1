@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+data:
+  APP_MESSAGE: "Hello World"
+  APP_VERSION: "1"
