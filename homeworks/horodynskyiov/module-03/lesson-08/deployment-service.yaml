@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: horodynskyiov/course-app:lesson-08
+          ports:
+            - containerPort: 8080
+          # Перевірка готовності: існує /tmp/healthy -> pod готовий
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -f /tmp/healthy
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+          # Перевірка "живості": HTTP /health на порту 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
