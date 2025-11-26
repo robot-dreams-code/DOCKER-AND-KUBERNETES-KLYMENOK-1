@@ -56,6 +56,10 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
+      volumes:
+        - name: dbl-data
+          persistentVolumeClaim:
+            claimName: dbl-data-claim
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -80,5 +84,7 @@ spec:
   ports:
     - port: 80 
       targetPort: 8080 
+      protocol: TCP
+      name: course-app
       protocol: TCP
       name: course-app
