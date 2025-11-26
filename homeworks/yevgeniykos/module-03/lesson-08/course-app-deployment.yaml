@@ -6,7 +6,7 @@ metadata:
   labels:
     app: course-app
 spec:
-  replicas: 10
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: course-app
-          image: rdlsolutions/course-app:1.0.1
+          image: rdlsolutions/course-app:2.0.0
           resources:
             requests:
               cpu: "100m"  
@@ -35,9 +35,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: course-app-config
-          volumeMounts:
-            - name: dbl-data
-              mountPath: /data
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
@@ -51,7 +48,7 @@ spec:
             successThreshold: 1
           readinessProbe:
             httpGet:
-              path: /ready
+              path: /readyz
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 5
@@ -59,10 +56,6 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
-      volumes:
-        - name: dbl-data
-          persistentVolumeClaim:
-            claimName: dbl-data-claim
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -72,7 +65,6 @@ metadata:
 data:
   APP_MESSAGE: "Welcome to the Course Application!"
   APP_REDIS_URL: "redis://redis:6379/0"
-  APP_DB_PATH: "/data/app.db"
 ---
 apiVersion: v1
 kind: Service
@@ -86,7 +78,7 @@ spec:
   selector:
     app: course-app
   ports:
-    - port: 8080 
+    - port: 80 
       targetPort: 8080 
       protocol: TCP
       name: course-app
