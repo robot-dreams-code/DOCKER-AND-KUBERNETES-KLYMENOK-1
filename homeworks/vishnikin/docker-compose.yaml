@@ -1,5 +1,13 @@
 services:
   web:
+    build: .
+    depends_on:
+      - app
+    volumes:
+      - web_data:/usr/share/nginx/html:ro
+    image: nginx:latest
+    ports:
+      - "8098:8098"
     image: nginx:latest
     ports:
       - "80:80"
@@ -8,10 +16,14 @@ services:
   app:
     image: course-app:latest
     ports:
-      - "8080:8080"
+      - "8099:8099"
     networks:
       - frontend
       - backend
+    depends_on:
+      - redis
+    volumes:
+      - app_data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -21,11 +33,18 @@ services:
     environment:
       - APP_STORE=redis
       - APP_REDIS_URL=redis://redis:6379/0
+      - APP_DB_PATH=/app/data/data.sql
   redis:
     image: redis:latest
     networks:
       - backend
       - db_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
     environment:
       redis_user: user
       redis_password: password
@@ -37,3 +56,7 @@ networks:
     driver: bridge
   db_network:
     driver: bridge
+volumes:
+  redis_data:
+  web_data:
+  app_data:

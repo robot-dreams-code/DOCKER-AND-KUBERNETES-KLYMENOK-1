@@ -1,0 +1,52 @@
+services:
+  course_app:
+    image: viktor1sss/course-app:lesson-04
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0 
+      APP_MESSAGE: "Docker Compose Course App Hello Viktor "
+    
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"] 
+      interval: 10s      
+      timeout: 5s         
+      retries: 3          
+      start_period: 20s
+    deploy:
+      replicas: 2 
+      restart_policy:
+        condition: on-failure 
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - course_app_net 
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data 
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      replicas: 1 
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          memory: 128M
+    
+    networks:
+      - course_app_net
+
+volumes:
+  redis_data:
+
+networks:
+  course_app_net:
+    driver: overlay
