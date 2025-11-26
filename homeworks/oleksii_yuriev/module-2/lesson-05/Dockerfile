@@ -8,7 +8,8 @@ RUN pip install -r requirements.txt
 COPY . .
 
 RUN adduser -D -u 1000 appuser  \
-    && chown -R appuser:appuser /app 
+    && chown -R appuser:appuser /app  \ 
+    &&  apk update && apk add curl 
 
 EXPOSE 8080
 USER appuser

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: default
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: app
+
+  strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 25%
+        maxSurge: 25%
+
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: yurievac/lesson-06:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: "Europe/Kiev"
+            - name: LANG
+              value: "en_US.UTF-8"
+            - name: LC_ALL
+              value: "en_US.UTF-8"
+            - name: LANGUAGE
+              value: "en_US:en"
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_MESSAGE
+
+            - name: APP_STORE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_STORE
+            - name: APP_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: APP_REDIS_URL
