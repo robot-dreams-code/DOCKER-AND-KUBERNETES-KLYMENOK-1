@@ -1,7 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-app-ingress
+  namespace: mod03-less08
+  name: course-app-ingress
 spec:
   rules:
   - host: "course-app.local" 
@@ -13,4 +14,4 @@ spec:
           service:
             name: course-app-service 
             port:
-              number: 8080 
+              number: 80 
