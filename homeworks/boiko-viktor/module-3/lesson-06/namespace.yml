@@ -1,0 +1,9 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: course-app-dev
+  labels:
+    name: course-app-dev
+    environment: development
+    managed-by: kubectl

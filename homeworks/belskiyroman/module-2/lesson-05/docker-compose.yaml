@@ -1,0 +1,33 @@
+services:
+  web:
+    depends_on:
+      redis:
+        condition: service_healthy
+    build:
+      context: ../../../../apps/course-app
+      dockerfile: ../../homeworks/belskiyroman/module-2/lesson-05/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=Hello World!
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz"]
+      interval: 10s
+
+  redis:
+    image: redis:7.0.0-alpine
+    volumes:
+      - redis_conf:/usr/local/etc/redis
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+
+volumes:
+  redis_conf:
+  redis_data:
+
+networks:
+  web:
+  redis:
