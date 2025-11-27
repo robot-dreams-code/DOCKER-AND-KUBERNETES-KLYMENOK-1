@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lesson-6
+  labels:
+    app: lesson-6
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lesson-6
+  template:
+    metadata:
+      name: lesson-6
+      labels:
+        app: lesson-6
+    spec:
+      containers:
+        - name: lesson-6
+          image: vitaliyavramenko/lesson-6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

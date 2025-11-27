@@ -1,0 +1,61 @@
+#Kubectl commands
+#Homework lesson8
+#23 11 2025
+
+kubectl get ingress
+kubectl get ingress course-app-ingress
+kubectl get ingress --all-namespaces
+
+
+openssl version
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=course-app.local/O=course-app.local"
+kubectl create secret tls course-app-tls --key tls.key --cert tls.crt
+kubectl get secret course-app-tls
+
+
+kubectl apply -f course-app-ingress.yaml
+https://course-app.local
+
+kubectl get svc course-app-service
+kubectl describe ingress course-app-ingress
+kubectl get endpoints course-app-service -o wide
+#https://course-app.local
+
+
+
+kubectl edit deployment course-app-deployment
+#        readinessProbe:
+#          failureThreshold: 1
+#          httpGet:
+#            path: /notfound
+#            port: 8080
+#            scheme: HTTP
+#          initialDelaySeconds: 1
+#          periodSeconds: 1
+#          successThreshold: 1
+#          timeoutSeconds: 1
+
+kubectl get pods -l app=course-app -o wide
+kubectl get endpoints course-app-service -o wide
+
+
+kubectl edit deployment course-app-deployment
+#       readinessProbe:
+#         failureThreshold: 3
+#         httpGet:
+#           port: 8080
+#          scheme: HTTP
+#         initialDelaySeconds: 5
+#         periodSeconds: 5
+#         successThreshold: 1
+#         timeoutSeconds: 1
+
+kubectl get pods -l app=course-app -o wide
+kubectl get endpoints course-app-service -o wide
+
+#check Failure Pod  - only for one pod - didn't work. deployment works for all pods at once 
+
+kubectl get pods -l app=course-app -o wide
+kubectl get endpointslice -l kubernetes.io/service-name=course-app-service -o yaml
+
+

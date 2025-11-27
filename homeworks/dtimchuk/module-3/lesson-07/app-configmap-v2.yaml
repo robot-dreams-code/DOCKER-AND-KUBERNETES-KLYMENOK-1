@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: dtimchuk-dev
+  labels:
+    app: course-app
+    env: development
+data:
+  APP_NAME: "Course Application Updated"
+  APP_VERSION: "2.0"
+  APP_ENVIRONMENT: "development"
+  LOG_LEVEL: "debug"
+  MESSAGE: "Hello from ConfigMap version 2 - UPDATED!"

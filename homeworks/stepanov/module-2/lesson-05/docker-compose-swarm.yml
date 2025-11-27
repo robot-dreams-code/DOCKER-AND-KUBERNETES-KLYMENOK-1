@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  app:
+    image: lesson-05-app:latest
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    networks:
+      - backend
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+    volumes:
+      - app_data:/app/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+volumes:
+  app_data:
+  redis_data:
+
+networks:
+  backend:
+    driver: overlay

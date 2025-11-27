@@ -1,0 +1,36 @@
+services:
+  course-app:
+    build:
+      context: ../../../..
+      dockerfile: homeworks/perkhun/module-2/lesson-04/Dockerfile
+    container_name: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+      APP_MESSAGE: "Hello from Compose"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthz" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - appdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  appdata:

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: lesson-07
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: course-app
+          image: kusandr0/robot_dreams_app:07-alpine-mod
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_TZ
+            - name: LANG
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LANG
+            - name: LC_ALL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LC_ALL
+            - name: LANGUAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LANGUAGE
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_MESSAGE
+            - name: APP_STORE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_STORE
+            - name: APP_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: APP_REDIS_URL
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 10

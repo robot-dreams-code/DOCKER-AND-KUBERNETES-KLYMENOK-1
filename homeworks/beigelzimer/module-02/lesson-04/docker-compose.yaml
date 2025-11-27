@@ -1,0 +1,15 @@
+services:
+  pythonapp:
+    image: course-app:v1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://redis:6379/0
+
+  redis:
+    image: redis:8.0
+    ports:
+      - "6379:6379"

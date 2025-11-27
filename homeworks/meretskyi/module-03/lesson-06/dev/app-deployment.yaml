@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: course-app-dev
+  labels:
+    app: course-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: kyrops/course-app:latest
+          ports:
+            - containerPort: 8080

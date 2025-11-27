@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: lesson-07
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis-server
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server"]
+          env:          
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_TZ
+            - name: LANG
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LANG
+            - name: LC_ALL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LC_ALL
+            - name: LANGUAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_LANGUAGE

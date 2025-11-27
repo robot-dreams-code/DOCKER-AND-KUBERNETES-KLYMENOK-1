@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: dev
+data:
+  APP_MESSAGE: "Hello from ConfigMap"
+  APP_STORE: "memory"

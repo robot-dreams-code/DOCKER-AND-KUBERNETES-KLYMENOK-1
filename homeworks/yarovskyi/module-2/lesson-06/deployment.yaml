@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app
+    namespace: robotdreams
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+            containers:
+                - name: course-app
+                  image: yarovskiy/course-app
+                  ports:
+                      - containerPort: 8080
