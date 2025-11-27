@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-deploy
+  namespace: lab
+  labels:
+    env: qa
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: qa
+  template:
+    metadata:
+      name: lab-pod
+      namespace: lab
+      labels:
+        env: qa
+    spec:
+      containers:
+        - name: app
+          image: mmykhailenko/lesson-04:dev
+          ports:
+            - containerPort: 8080
