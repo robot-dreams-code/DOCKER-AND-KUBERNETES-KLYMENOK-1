@@ -43,28 +43,15 @@ spec:
             timeoutSeconds: 2
             failureThreshold: 3 
             successThreshold: 1
-            
+
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+
           env:
-            - name: TZ
-              value: "Europe/Kiev"
-            - name: LANG
-              value: "en_US.UTF-8"
-            - name: LC_ALL
-              value: "en_US.UTF-8"
-            - name: LANGUAGE
-              value: "en_US:en"
-            - name: APP_MESSAGE
-              valueFrom:
-                configMapKeyRef:
-                  name: course-app-config
-                  key: APP_MESSAGE
-            - name: APP_STORE
-              valueFrom:
-                configMapKeyRef:
-                  name: course-app-config
-                  key: APP_STORE
             - name: APP_REDIS_URL
               valueFrom:
                 secretKeyRef:
                   name: redis-secret
                   key: APP_REDIS_URL
+
