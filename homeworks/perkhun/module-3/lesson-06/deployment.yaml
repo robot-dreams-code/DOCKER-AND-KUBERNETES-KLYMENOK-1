@@ -25,6 +25,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: course-app-config
+          env:
+            - name: APP_STORE
+              value: redis
+            - name: APP_REDIS_URL
+              value: redis://redis:6379
           livenessProbe:
             httpGet:
               path: /healthz
