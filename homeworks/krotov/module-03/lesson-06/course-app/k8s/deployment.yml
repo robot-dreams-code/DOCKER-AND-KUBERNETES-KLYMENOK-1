@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "python-course-app"
+  name: "python-course-app-deployment"
+  namespace: krotovhh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "python-course-app"
+  template:
+    metadata:
+      labels:
+        app: "python-course-app"
+    spec:
+      containers:
+      - env:
+        image: krotovhh/course-app:1.0
+        imagePullPolicy: Always
+        name: python-course-app
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi  
+      restartPolicy: Always
+...
+
