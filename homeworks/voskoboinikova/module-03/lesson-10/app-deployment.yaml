@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app
+    namespace: lesson10
+spec:
+    replicas: 10
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+           labels:
+                app: course-app
+        spec:
+           containers:
+                -   name: course-app
+                    image: course-app:v1.1
+                    ports:
+                        -   containerPort: 8080
+                    env:
+                      - name: APP_MESSAGE
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_MESSAGE
+                      - name: APP_STORE
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_STORE
+                      - name: APP_REDIS_URL
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_REDIS_URL
+    strategy:
+       type: RollingUpdate
+       rollingUpdate:
+          maxSurge: 0%
+          maxUnavailable: 25%
