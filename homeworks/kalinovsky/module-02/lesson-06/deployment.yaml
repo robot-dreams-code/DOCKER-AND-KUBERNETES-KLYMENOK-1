@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: course-app
 spec:
-  replicas: 1
+  replicas: 10
   selector:
     matchLabels:
       app: course-app
@@ -17,8 +17,31 @@ spec:
           image: olyaalchemy/course-app:v2
           ports:
             - containerPort: 8000
-          env:                         
+          env:
             - name: APP_STORE
-              value: "redis"
+              valueFrom:          
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_STORE
             - name: APP_REDIS_URL
-              value: "redis://redis:6379/0"
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_REDIS_URL
+            - name: API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: API_VERSION
+          volumeMounts:
+            - name: script-volume
+              mountPath: /temp
+      volumes:
+        - name: script-volume
+          configMap:
+            name: course-app-config
+  strategy:
+    type: RollingUpdate 
+    rollingUpdate:
+      maxSurge: 4
+      maxUnavailable: 5
