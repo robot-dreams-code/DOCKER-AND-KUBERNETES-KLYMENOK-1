@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+data:
+  APP_NAME: "Course App"
+  APP_LOG_LEVEL: "debug"
+  APP_TIMEOUT: "5s"
