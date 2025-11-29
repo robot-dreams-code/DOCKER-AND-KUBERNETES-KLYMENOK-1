@@ -13,14 +13,14 @@ spec:
           image: curlimages/curl:8.10.1
           env:
             - name: WEBHOOK_PATH
-              value: "workshop/demo"  # Замінити на свій webhook path
+              value: "workshopdemo"  # Замінити на свій webhook path
           command:
             - sh
             - -c
             - |
-              for i in $(seq 1 500); do
+              for i in $(seq 1 2500); do
                 curl -s http://n8n:5678/webhook/${WEBHOOK_PATH} >/dev/null
-                sleep 0.2
+                sleep 0.1
               done
           resources:
             requests:
