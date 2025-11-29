@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+      - name: course-app
+        image: vvpet/course-app:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_STORE
+          value: "sqlite"
+        - name: APP_DB_PATH
+          value: "/data/app.db"
+        - name: APP_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_MESSAGE
+        volumeMounts:
+        - name: appdata
+          mountPath: /data
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      volumes:
+      - name: appdata
+        emptyDir: {}
