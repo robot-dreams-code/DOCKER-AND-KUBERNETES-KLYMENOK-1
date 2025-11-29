@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: snak-ingress
+spec:
+  tls:
+    - hosts:
+        - app.snak
+      secretName: snak-tls-secret
+  rules:
+    - host: app.snak
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: snak-app-service
+                port:
+                  number: 8080
