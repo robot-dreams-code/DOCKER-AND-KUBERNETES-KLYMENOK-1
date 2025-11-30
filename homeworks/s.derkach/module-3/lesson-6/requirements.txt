@@ -1,0 +1,5 @@
+fastapi==0.93
+uvicorn[standard]
+redis
+python-multipart
+httpx
