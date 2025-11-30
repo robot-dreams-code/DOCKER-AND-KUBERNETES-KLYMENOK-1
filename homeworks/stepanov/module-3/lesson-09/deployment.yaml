@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snak-app-deployment
+  labels:
+    app: snak-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: snak-app
+  template:
+    metadata:
+      labels:
+        app: snak-app
+    spec:
+      containers:
+        - name: snak-app-container
+          image: andreqko/snak-app:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: snak-config
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
