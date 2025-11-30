@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: ../../../..
+      dockerfile: homeworks/yarovskyi/module-2/lesson-04/app/Dockerfile
+    ports:
+      - 8084:8080
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://:veryStrongPassword@redis:6379/0
+  redis:
+    build:
+      context: ./redis

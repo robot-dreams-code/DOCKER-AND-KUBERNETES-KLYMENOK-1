@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  course-app:
+    image: lesson05_course-app
+    ports:
+      - "8080:8080"
+    environment:
+      APP_MESSAGE: "Hello from Docker Stack!"
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+      APP_DB_PATH: /data/app.db
+    volumes:
+      - appdata:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+    depends_on:
+      - redis
+    command: >
+      sh -c "
+      until nc -z redis 6379; do
+        echo 'Waiting for Redis...';
+        sleep 2;
+      done;
+      uvicorn src.main:app --host 0.0.0.0 --port 8080
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  redis_data:
+  appdata:
