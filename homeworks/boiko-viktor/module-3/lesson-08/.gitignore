@@ -1,0 +1,9 @@
+# Keys and Certificates
+*.key
+*.crt
+
+# Secrets
+#secret.yml
+
+# OS specific
+.DS_Store
