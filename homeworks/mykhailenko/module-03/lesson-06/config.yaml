@@ -4,4 +4,4 @@ metadata:
   name: lab-cm
   namespace: lab
 data:
-  APP_MESSAGE: "Hello, Robot Dreams! v2"
+  APP_MESSAGE: "Hello, Robot Dreams!"
