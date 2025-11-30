@@ -24,7 +24,7 @@ course-app-ingress   traefik   course-app.local   192.168.64.2   80, 443   32m
 kubectl describe ingress course-app-ingress
 ```
 
-перевіряємо наявнять SSL 
+перевіряємо наявність SSL 
 ```
 curl https://course-app.local -L
 curl: (60) SSL certificate problem: unable to get local issuer certificate
@@ -48,7 +48,7 @@ curl: (60) SSL certificate problem: unable to get local issuer certificate
 ```
 
 
-Слідкуємо для ендпоінтами
+Слідкуємо за ендпоінтами
 ```
 kubectl get endpoints course-app-svc -o wide -w
 ```
