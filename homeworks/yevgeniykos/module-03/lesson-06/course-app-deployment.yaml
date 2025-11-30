@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: mod03-less06
+  labels:
+    app: course-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: rdlsolutions/course-app:1.0.5
+          resources:
+            requests:
+              cpu: "200m"  
+              memory: "256Mi" 
+            limits:
+              cpu: "500m"  
+              memory: "512Mi" 
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              value: "Welcome to the Course Application!"
+            - name: APP_REDIS_URL
+              value: "redis://redis:6379/0"
+            - name: APP_DB_PATH
+              value: "/data/app.db"
+            - name: APP_STORE
+              value: "redis"
+          volumeMounts:
+            - name: dbl-data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+      volumes:
+        - name: dbl-data
+          persistentVolumeClaim:
+            claimName: dbl-data-claim
