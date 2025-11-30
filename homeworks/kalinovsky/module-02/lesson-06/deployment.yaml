@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app-cont
+          image: olyaalchemy/course-app:v2
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_STORE
+              valueFrom:          
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_STORE
+            - name: APP_REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_REDIS_URL
+            - name: API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: API_VERSION
+          volumeMounts:
+            - name: script-volume
+              mountPath: /temp
+      volumes:
+        - name: script-volume
+          configMap:
+            name: course-app-config
+  strategy:
+    type: RollingUpdate 
+    rollingUpdate:
+      maxSurge: 4
+      maxUnavailable: 5
