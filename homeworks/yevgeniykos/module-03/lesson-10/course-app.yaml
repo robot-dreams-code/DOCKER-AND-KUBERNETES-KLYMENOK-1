@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: mod03-less10
+  labels:
+    app: course-app
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 20%
+      maxSurge: 30%  
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: rdlsolutions/course-app:2.0.0
+          resources:
+            requests:
+              cpu: "100m"  
+              memory: "64Mi" 
+            limits:
+              cpu: "200m"  
+              memory: "512Mi" 
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: mod03-less10
+data:
+  APP_MESSAGE: "Welcome to the Course Application!"
+  APP_REDIS_URL: "redis://redis:6379/0"
+  APP_STORE: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-svc
+  namespace: mod03-less10
+  labels:
+    app: course-app
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+    - port: 80 
+      targetPort: 8080 
+      protocol: TCP
+      name: course-app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: mod03-less10
+  name: course-app-ingress
+spec:
+  rules:
+  - host: "course-app.local" 
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: course-app-svc
+            port:
+              number: 80 
