@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: course-app-config
 data:
-  APP_MESSAGE: "Версія конфігурації 1.0"
+  APP_MESSAGE: "Version 2.0: ConfigMap Update works!"
 
