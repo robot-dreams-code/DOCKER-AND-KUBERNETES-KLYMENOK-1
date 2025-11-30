@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config-map
+  namespace: course-app-dev
+data:
+  HELLO_MESSAGE: "Hello, it's homework from Kyrylo Meretskyi!"
+  REVERSED_HELLO_MESSAGE: "!iykstereM olyryK morf krowemoh s'ti ,olleH"
