@@ -4,7 +4,7 @@ metadata:
   name: course-app-ingress
 spec:
   rules:
-    - host: course-app.local  # Доменне ім'я
+    - host: course-app.local
       http:
         paths:
           - path: /
