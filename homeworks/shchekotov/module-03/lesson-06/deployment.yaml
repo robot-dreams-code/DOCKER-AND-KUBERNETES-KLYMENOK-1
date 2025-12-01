@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: course-app
+spec:
+  type: NodePort
+  selector:
+    app: course-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: course-app
+  labels:
+    app: course-app
+  annotations:
+    config.kubernetes.io/depends-on: "[Service/course-app-store]"
+spec:
+  replicas: 7
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: 3floz/course-app:latest
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+            - secretRef:
+                name: course-app-secret
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: course-app-store
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app-store
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: course-app-store
+  labels:
+    app: course-app-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-app-store
+  template:
+    metadata:
+      labels:
+        app: course-app-store
+    spec:
+      containers:
+        - name: course-app-store
+          image: redis:8.2.3
+          envFrom:
+            - secretRef:
+                name: course-app-secret
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3

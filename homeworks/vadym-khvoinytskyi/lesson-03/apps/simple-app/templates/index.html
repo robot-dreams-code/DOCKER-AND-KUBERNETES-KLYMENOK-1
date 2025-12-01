@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Застосунок для вивчення Docker</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Створення та керування Docker-образами</h1>
+            <div class="version-badge">Версія: {{.Version}}</div>
+        </header>
+
+        <main class="content">
+            <div class="card gradient-1">
+                <h2>Ваше завдання</h2>
+                <p>Створіть Dockerfile для цього застосунку</p>
+            </div>
+
+            <div class="card gradient-2">
+                <h2>Про застосунок</h2>
+                <p class="challenge-text">
+                    Це простий веб-застосунок на Go, який демонструє основні концепції роботи з Docker
+                    <br><br>
+                    Застосунок складається з Go коду, HTML шаблонів та CSS стилів
+                    <br><br>
+                    Можете змінювати будь-які файли та перебудовувати Docker образ
+                </p>
+            </div>
+
+            <div class="card gradient-3">
+                <h2>Що варто реалізувати</h2>
+                <ul class="practices-list">
+                    <li>Використати multi-stage builds для зменшення розміру образу</li>
+                    <li>Запускати від імені non-root користувача для безпеки</li>
+                    <li>Використати кешування шарів правильно впорядковуючи команди</li>
+                    <li>Використати конкретні версії базових образів (уникати 'latest')</li>
+                    <li>Мінімізувати кількість шарів</li>
+                    <li>Використати .dockerignore для виключення зайвих файлів</li>
+                </ul>
+            </div>
+
+            <div class="experiment-section">
+                <h3>Ідеї для експериментів</h3>
+                <ol>
+                    <li>Змініть цей текст і перебудуйте образ - зверніть увагу які кроки кешуються</li>
+                    <li>Спробуйте змінити версію залежності в go.mod</li>
+                    <li>Порівняйте розміри образів з multi-stage builds та без них</li>
+                    <li>Перевірте, від імені якого користувача працює застосунок всередині контейнера</li>
+                </ol>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Успіхів!</p>
+        </footer>
+    </div>
+</body>
+</html>
