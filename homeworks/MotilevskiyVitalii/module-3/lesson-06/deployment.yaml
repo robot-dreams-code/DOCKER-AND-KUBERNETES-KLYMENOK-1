@@ -21,12 +21,14 @@ spec:
       containers:
         - name: course-app-motilevskiy
           image: motilevskiy/course-app:1.0
-          envFrom:
-            - configMapRef:
-                name: course-config-motilevskiy
           imagePullPolicy: Always # Завжди скачувати image з репозиторія (використовувати тільки для розробки)
           ports:
             - containerPort: 8080
+          env:
+            - name: APP_STORE
+              value: "redis"
+            - name: APP_REDIS_URL
+              value: "redis://redis:6379"
           resources:
             requests:
               memory: "64Mi"
