@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: course-app-dev
+  name: course-app-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
