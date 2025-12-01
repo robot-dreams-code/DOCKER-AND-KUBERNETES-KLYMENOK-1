@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: course-app-svc
+    namespace: lesson07
+spec:
+    type: ClusterIP
+    selector:
+        app: course-app
+    ports:
+        -   port: 80
+            targetPort: 8080
+            protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app
+    namespace: lesson07
+spec:
+    replicas: 11
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+           labels:
+                app: course-app
+        spec:
+           imagePullSecrets:
+             - name: harbor-secret
+           containers:
+                -   name: course-app
+                    image: demo.goharbor.io/lesson06/course-app:v1.0
+                    ports:
+                        - containerPort: 8080
+                    livenessProbe:
+                       httpGet:
+                          path: /healthz
+                          port: 8080
+                       initialDelaySeconds: 10
+                       periodSeconds: 5
+                    readinessProbe:
+                       httpGet:
+                          path: /readyz
+                          port: 8080
+                       initialDelaySeconds: 10
+                       periodSeconds: 5
+                    env:
+                      - name: APP_MESSAGE
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_MESSAGE
+    strategy:
+       type: RollingUpdate
+       rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 40%
