@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-map
+data:
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis:6379"
