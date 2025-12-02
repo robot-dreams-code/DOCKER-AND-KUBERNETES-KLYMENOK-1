@@ -9,6 +9,11 @@ spec:
   selector:
     matchLabels:
       app: course-app-andrii-kharkovyi
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
   template:
     metadata:
       labels:
@@ -16,18 +21,31 @@ spec:
     spec:
       containers:
         - name: course-app-andrii-kharkovyi
-          image: geo14tr89/course-app-andrii:latest
+          image: geo14tr89/course-app-andrii:v2
           ports:
             - containerPort: 8080
           env:
             - name: APP_MESSAGE
-              value: "Course App by Andrii Kharkovyi"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_MESSAGE
             - name: APP_STORE
-              value: "sqlite"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_STORE
             - name: APP_DB_PATH
-              value: "/data/app.db"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_DB_PATH
             - name: APP_REDIS_URL
-              value: "redis://course-redis:6379/0"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_REDIS_URL
+
           livenessProbe:
             httpGet:
               path: /healthz

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app
+    namespace: lesson07
+spec:
+    replicas: 20
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+           labels:
+                app: course-app
+        spec:
+           volumes:
+                - name: appdata
+           containers:
+                -   name: course-app
+                    image: demo.goharbor.io/lesson06/course-app:v1.1
+                    ports:
+                        -   containerPort: 8080
+                    volumeMounts:
+                      - name: appdata
+                        mountPath: /apps/couse-app/data 
+                    env:
+                      - name: APP_MESSAGE
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_MESSAGE
+                      - name: APP_STORE
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_STORE
+                      - name: APP_REDIS_URL
+                        valueFrom:
+                          configMapKeyRef:
+                            name: web-config
+                            key: APP_REDIS_URL
+    strategy:
+       type: RollingUpdate
+       rollingUpdate:
+          maxSurge: 0%
+          maxUnavailable: 25%

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment-recreate
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: example-recreate
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: example-recreate
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        env:
+        - name: APP_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: example-config
+              key: APP_MESSAGE
