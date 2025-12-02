@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  namespace: lesson07
+data:
+  APP_MESSAGE: "Hello! Welcome To Course App in Lesson07!"

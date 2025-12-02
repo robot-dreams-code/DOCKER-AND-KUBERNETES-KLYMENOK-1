@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snak-app-deployment
+  labels:
+    app: snak-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: snak-app
+  template:
+    metadata:
+      labels:
+        app: snak-app
+    spec:
+      containers:
+        - name: snak-app-container
+          image: redis:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: snak-config
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10
+      maxSurge: 10
