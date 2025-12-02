@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: course-app-ingress
+spec:
+  tls:
+  - hosts:
+    - course-app.127.0.0.1.sslip.io
+    secretName: course-app-tls    # Назва секрету, який ми створили
+  rules:
+  - host: course-app.127.0.0.1.sslip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: course-app-external-service
+            port:
+              number: 80
