@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app-container
+          image: vladyslavvoitenko/course-app:v1.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_MESSAGE

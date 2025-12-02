@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: ../../..
-      dockerfile: ./homeworks/v.voitenko/lesson-05/Dockerfile
+      context: ../../../..
+      dockerfile: ./homeworks/v.voitenko/module-2/lesson-05/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
