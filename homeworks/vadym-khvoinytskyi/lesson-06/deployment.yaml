@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: rd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+        app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: ghcr.io/vadymkhvoinytskyi/course-app:latest
+          ports:
+           - containerPort: 8080
+      imagePullSecrets:
+        - name: github
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app
+spec:
+  type: NodePort  
+  selector:
+    app: course-app
+  ports:
+  - port: 80          
+    targetPort: 8080
+    nodePort: 30001
+
+

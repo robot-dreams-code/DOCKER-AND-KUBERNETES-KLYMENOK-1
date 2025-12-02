@@ -1,0 +1,39 @@
+services:
+  web:
+    build:
+      context: ../../../../
+      dockerfile: homeworks/shchekotov/module-02/lesson-04/Dockerfile
+    env_file:
+        - course-app.env
+    ports:
+      - "8080:8080"
+    networks:
+      - course-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/healthz"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  redis:
+    image: redis:8.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - course-app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+networks:
+  course-app-network:
+    driver: bridge
+
+volumes:
+  redis_data:
