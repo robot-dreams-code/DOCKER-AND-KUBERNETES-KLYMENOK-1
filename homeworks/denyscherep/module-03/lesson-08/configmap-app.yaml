@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+data:
+  APP_MESSAGE: "Welcome to the Course App V1"
+  APP_STORE: "sqlite"
