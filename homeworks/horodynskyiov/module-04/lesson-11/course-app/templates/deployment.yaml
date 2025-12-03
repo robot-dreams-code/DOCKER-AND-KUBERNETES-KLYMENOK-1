@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "course-app.fullname" . }}
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "course-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "course-app.name" . }}
+        {{- include "course-app.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: course-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: APP_STORE
+              value: {{ .Values.redis.store | quote }}
+            - name: APP_REDIS_URL
+              value: {{ .Values.redis.url | quote }}
