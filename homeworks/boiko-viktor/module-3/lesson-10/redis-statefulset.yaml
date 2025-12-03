@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-course-app
+  namespace: course-app-dev
+spec:
+  serviceName: "redis-course-app-svc"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis-course-app
+  template:
+    metadata:
+      labels:
+        app: redis-course-app
+    spec:
+      containers:
+        - name: redis-course-app
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
