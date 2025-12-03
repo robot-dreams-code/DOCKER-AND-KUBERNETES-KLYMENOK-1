@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: rd
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+        app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: ghcr.io/vadymkhvoinytskyi/course-app:latest
+          imagePullPolicy: Always
+          args: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+          envFrom:
+            - configMapRef:
+                name: test-config
+          ports:
+           - containerPort: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+      imagePullSecrets:
+        - name: github
+  strategy:
+   type: RollingUpdate
+   rollingUpdate:
+     maxSurge: 1
+     maxUnavailable: 1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: rd
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+  - port: 80          
+    targetPort: 8080
+
