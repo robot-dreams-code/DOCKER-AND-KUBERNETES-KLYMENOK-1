@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: dev
+  labels:
+    app: course-app
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: letsmakesome/course-app:v0.0.1
+          ports:
+            - containerPort: 8080

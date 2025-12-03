@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: dev
+  labels:
+    app: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: Recreate
+#    rollingUpdate:
+#      maxUnavailable: 25%
+#      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: letsmakesome/course-app:v0.0.1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_MESSAGE
+...
+
