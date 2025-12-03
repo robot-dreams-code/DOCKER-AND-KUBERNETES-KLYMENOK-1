@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: course-app-ns
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: Recreate
+#    type: RollingUpdate
+#    rollingUpdate:
+#      maxUnavailable: 1
+#      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+      - name: course-app
+        image: holymykolay/course-app:0.1
+        ports:
+          - containerPort: 8080
+        env:
+          - name: APP_ENV
+            valueFrom:
+              configMapKeyRef:
+                name: course-app-config-map
+                key: APP_ENV
+          - name: LOG_LEVEL
+            valueFrom:
+              configMapKeyRef:
+                name: course-app-config-map
+                key: LOG_LEVEL
