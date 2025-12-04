@@ -23,8 +23,9 @@ spec:
             - configMapRef:
                 name: course-app-config-map
           livenessProbe:
-            httpGet: /healthz
-            port: 8080
+            httpGet:
+              path: /healthz
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
