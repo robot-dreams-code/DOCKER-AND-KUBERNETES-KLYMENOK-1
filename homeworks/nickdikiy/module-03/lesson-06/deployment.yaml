@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app-deployment
+    namespace: homework
+spec:
+    replicas: 11
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+            containers:
+                -   name: course-app
+                    image: nickdikiynd/course-app:1.0
+                    ports:
+                        -   containerPort: 80

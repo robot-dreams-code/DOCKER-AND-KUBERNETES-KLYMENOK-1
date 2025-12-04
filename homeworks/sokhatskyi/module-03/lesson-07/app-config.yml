@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  app-store: redis
+  APP_REDIS_URL: redis://redis-service:6379/0

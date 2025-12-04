@@ -8,7 +8,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 RUN adduser -D -u 1000 appuser  \
-    && chown -R appuser:appuser /app
+    && chown -R appuser:appuser /app 
 
 EXPOSE 8080
 USER appuser
