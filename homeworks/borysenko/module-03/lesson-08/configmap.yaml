@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-map
+data:
+  APP_STORE: "sqlite"
+  APP_DB_PATH: "/add/data/data.sql"
