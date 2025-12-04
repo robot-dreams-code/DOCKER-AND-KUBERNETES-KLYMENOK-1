@@ -1,0 +1,59 @@
+# Course-app Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+      - name: course-app
+        image: digreyon/course-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        envFrom:
+          - configMapRef:
+              name: course-app-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 2
