@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  labels:
+    app: capp
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: capp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: capp
+      annotations:
+        config: DATA
+    spec:
+      containers:
+      - name: course-app
+        image: "malskur/capp:latest"
+        ports:
+          - containerPort: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 400m
+            memory: 512Mi
+        env:
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: LOG_LEVEL
+        - name: KUBERNETES_SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: KUBERNETES_SERVICE_PORT
