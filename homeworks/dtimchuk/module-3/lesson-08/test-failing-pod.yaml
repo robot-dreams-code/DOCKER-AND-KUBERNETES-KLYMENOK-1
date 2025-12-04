@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: course-app-failing
+  namespace: dtimchuk-dev
+  labels:
+    app: course-app
+    env: development
+    test: failing-readiness
+spec:
+  containers:
+  - name: course-app
+    image: dmitrytimchuk/course-app:latest
+    ports:
+    - containerPort: 8080
+      name: http
+    readinessProbe:
+      httpGet:
+        path: /failing-path  # ← Неіснуючий шлях!
+        port: 8080
+      periodSeconds: 5
+      initialDelaySeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 1
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      periodSeconds: 10
+      initialDelaySeconds: 15
+      timeoutSeconds: 3
+    envFrom:
+    - configMapRef:
+        name: course-app-config
