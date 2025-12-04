@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: "python-course-app-lesson08"
+  name: "python-course-app-lesson08-service"
+  namespace: krotovhh
+spec:
+  type: ClusterIP
+  selector:
+    app: "python-course-app-lesson08"
+  ports:
+  - name: python-course-app-lesson08-service
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600  
+...
+

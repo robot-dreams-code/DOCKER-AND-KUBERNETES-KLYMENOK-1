@@ -1,0 +1,30 @@
+# while using Rancher Desktop for Windows additional changes should be done 
+# Windows hosts file should be updated to resolve the ingress name to localhost IP
+# example of entry to be added to hosts file is below (without # symbol):
+# 127.0.0.1 pythonapp.local
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: "python-course-app-lesson08"
+  name: "python-course-app-lesson08-ingress"
+  namespace: krotovhh
+spec: 
+  rules:
+    - host: pythonapp.local
+      http:
+        paths: 
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: python-course-app-lesson08-service
+                port: 
+                  number: 80
+  # enabling TLS for our app
+  # using Ingress default certificate, because no specific certificate declared
+  tls:
+    - hosts:
+        - pythonapp.local
+  

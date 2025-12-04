@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "python-course-app-lesson08"
+  name: "python-course-app-lesson08-deployment"
+  namespace: krotovhh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "python-course-app-lesson08"
+  template:
+    metadata:
+      labels:
+        app: "python-course-app-lesson08"
+    spec:
+      containers:
+      - env:
+        image: krotovhh/course-app:2.0
+        imagePullPolicy: Always
+        name: python-course-app-lesson08
+        ports:
+        - containerPort: 80
+
+        readinessProbe:
+          # this probe perform check on start
+          # goes to 8080 port and do GET /readyz
+          # if answer received successfully - app started 
+          # if not - restart container 
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+        livenessProbe:
+          # this probe watches app to be available 
+          # executes GET requests every 5 seconds
+          # if successfull answer received - all good
+          # if GET fails - restart container    
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi  
+            
+      # in case if readiness or liveness probes fails 
+      # container will be restarted each time probes fails 
+      restartPolicy: Always
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      # amount of pods that can be created over replicas amount set while updating
+      maxSurge: 1
+      # amount of pods that can be unavailable while update is in progress 
+      maxUnavailable: 4
+...
+
