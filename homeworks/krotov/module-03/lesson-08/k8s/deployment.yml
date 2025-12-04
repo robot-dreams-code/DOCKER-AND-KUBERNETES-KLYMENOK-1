@@ -34,6 +34,8 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
 
         livenessProbe:
           # this probe watches app to be available 
@@ -45,6 +47,8 @@ spec:
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
 
         resources:
           limits:
@@ -53,7 +57,7 @@ spec:
           requests:
             cpu: 50m
             memory: 128Mi  
-            
+
       # in case if readiness or liveness probes fails 
       # container will be restarted each time probes fails 
       restartPolicy: Always
