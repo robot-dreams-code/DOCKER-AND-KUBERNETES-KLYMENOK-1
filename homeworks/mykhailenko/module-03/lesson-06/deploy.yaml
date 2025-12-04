@@ -15,6 +15,10 @@ spec:
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
+  replicas: 3
+  selector:
+    matchLabels:
+      env: qa
   template:
     metadata:
       name: lab-pod
@@ -30,3 +34,4 @@ spec:
           envFrom:
             - configMapRef:
                 name: lab-cm
+            - containerPort: 8080

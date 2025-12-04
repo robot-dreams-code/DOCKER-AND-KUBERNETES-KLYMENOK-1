@@ -1,0 +1,31 @@
+services:
+  app:
+    image: lesson-05:1.0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      -   redis
+    environment:
+      - APP_MESSAGE="Welcome to the Course App"
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://:password@redis:6379/0
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/healthz"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 15s
+
+  redis:
+    image: redis:alpine
+    command: "redis-server --requirepass password"
+    restart: unless-stopped
+    volumes:
+      - ./volumes/data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 50
+
+

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: course-app-dev
+  labels:
+    app: course-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: kyrops/course-app:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config-map
+                  key: HELLO_MESSAGE
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1 # скільки чекати на респонс
+            failureThreshold: 3 # спроб для перевірок, потім Pod -> NotReady
+
+# uncomment for Zero Downtime Test and comment readinessProbe from above
+#          readinessProbe:
+#            exec:
+#              command:
+#                - sh
+#                - -c
+#                - 'test -f /tmp/healthy'
+#            initialDelaySeconds: 5
+#            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 3
