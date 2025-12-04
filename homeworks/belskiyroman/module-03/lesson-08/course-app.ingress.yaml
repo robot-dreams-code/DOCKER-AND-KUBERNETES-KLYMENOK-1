@@ -4,6 +4,10 @@ metadata:
   name: course-app-ingress
   namespace: default
 spec:
+  tls:
+    - hosts:
+        - course-app.local
+      secretName: course-app-tls
   rules:
   - host: course-app.local
     http:
