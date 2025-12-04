@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: n8n
+  namespace: n8n-workshop
+spec:
+  type: ClusterIP
+  selector:
+    app: n8n-main
+  ports:
+    - port: 5678
+      targetPort: 5678
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n-main
+  namespace: n8n-workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: n8n-main
+  template:
+    metadata:
+      labels:
+        app: n8n-main
+    spec:
+      containers:
+        - name: n8n
+          image: n8nio/n8n:latest
+          ports:
+            - containerPort: 5678
+          envFrom:
+            - configMapRef:
+                name: n8n-config
+          env:
+            - name: DB_POSTGRESDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secret
+                  key: db-password
+            - name: N8N_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secret
+                  key: encryption-key
+            - name: N8N_PORT
+              value: "5678"
+            - name: N8N_PROTOCOL
+              value: "https"
+            - name: N8N_EDITOR_BASE_URL
+              value: "https://n8n.local"
+            - name: N8N_API_URL
+              value: "https://n8n.local"
+            - name: WEBHOOK_URL
+              value: "https://n8n.local"
+            - name: N8N_HOST
+              value: "n8n.local"
+            - name: N8N_LOG_LEVEL
+              value: "debug"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5678
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "800m"

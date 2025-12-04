@@ -1,9 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: course-app-service
+  name: course-app-external-service
+  labels:
+    app: course-app
 spec:
-  type: ClusterIP
   selector:
     app: course-app
   ports:
@@ -11,3 +12,4 @@ spec:
       port: 80
       targetPort: 8080
       nodePort: 30080
+  type: NodePort
