@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-redis
+  labels:
+    app: course-app-redis
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: course-app-redis
+  template:
+    metadata:
+      labels:
+        app: course-app-redis
+    spec:
+      containers:
+        - name: course-app-redis
+          image: redis:8.2.3
+          ports:
+            - containerPort: 6379
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-redis
+spec:
+  selector:
+    app: course-app-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
