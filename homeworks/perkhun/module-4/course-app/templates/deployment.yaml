@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: course-app
+  name: {{ include "course-app.fullname" . }}
 spec:
-  replicas: 10
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -11,25 +11,23 @@ spec:
       maxSurge: 2
   selector:
     matchLabels:
-      app: course-app
+      app: {{ include "course-app.name" . }}
   template:
     metadata:
       labels:
-        app: course-app
+        app: {{ include "course-app.name" . }}
     spec:
       containers:
-        - name: course-app
-          image: bperhun/course-app:latest
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
-          envFrom:
-            - configMapRef:
-                name: course-app-config
           env:
             - name: APP_STORE
               value: redis
             - name: APP_REDIS_URL
-              value: redis://redis:6379
+              value: redis://{{ .Values.redis.host }}:{{ .Values.redis.port }}
           livenessProbe:
             httpGet:
               path: /healthz
