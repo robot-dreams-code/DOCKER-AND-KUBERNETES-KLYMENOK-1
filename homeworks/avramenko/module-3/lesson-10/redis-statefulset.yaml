@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: rd
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  serviceName: redis
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      name: redis
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      restartPolicy: Always
+  volumeClaimTemplates:
+    - metadata:
+        namespace: rd
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
