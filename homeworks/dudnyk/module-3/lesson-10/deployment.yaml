@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-lvl8
+  labels:
+    app: course-app-lvl8
+spec:
+  replicas: 15
+  selector:
+    matchLabels:
+      app: course-app-lvl8
+  template:
+    metadata:
+      labels:
+        app: course-app-lvl8
+    spec:
+      containers:
+        - name: course-app-id
+          image: illiadudnyk/course-app-id:1.5
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: course-app-config-map
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
