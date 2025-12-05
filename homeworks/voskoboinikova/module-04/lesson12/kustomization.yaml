@@ -1,0 +1,16 @@
+# kustomization.yaml
+resources:
+  - dragonfly-operator.yaml
+
+images:
+  - name: quay.io/brancz/kube-rbac-proxy             
+    newName: corp-proxy/brancz/kube-rbac-proxy
+    newTag: v0.16.0
+
+  - name: docker.dragonflydb.io/dragonflydb/dragonfly
+    newName: corp-proxy/dragonflydb/dragonfly
+    newTag: v1.35.0
+
+  - name: docker.dragonflydb.io/dragonflydb/operator
+    newName: corp-proxy/dragonflydb/operator
+    newTag: v1.3.1

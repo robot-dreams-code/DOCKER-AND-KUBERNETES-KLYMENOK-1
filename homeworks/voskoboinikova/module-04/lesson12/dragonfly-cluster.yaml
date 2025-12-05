@@ -10,6 +10,7 @@ metadata:
   namespace: lesson12
 spec:
   replicas: 3
+  image: harbor.shared.avalaunch.rbua/ghcr-proxy/dragonflydb/dragonfly:v1.35.0
   resources:
     requests:
       cpu: 100m
