@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-course-app-ingress
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  tls:
+    - hosts:
+      {{- range .Values.ingress.rules }}
+        - {{ .host }}
+      {{- end }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  rules:
+  {{- $release := $.Release }} # save the top-level Release object
+  {{- range .Values.ingress.rules }}
+    - host: {{ .host }}
+      http:
+        paths:
+        {{- range .http.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $release.Name }}-{{ .backend.service.name }}
+                port:
+                  number: {{ .backend.service.port.number }}
+        {{- end }}
+  {{- end }}
