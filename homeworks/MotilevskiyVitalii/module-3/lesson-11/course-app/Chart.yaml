@@ -1,0 +1,6 @@
+apiVersion: v2
+name: course-app
+description: A Helm chart for course-app
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
