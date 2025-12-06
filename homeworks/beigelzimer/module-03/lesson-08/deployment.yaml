@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app
+spec:
+    replicas: 10
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+           containers:
+                -   name: course-app
+                    image: demo.goharbor.io/beigelzimer/course-app:v1.2
+                    ports:
+                        - containerPort: 8080
+                    readinessProbe:
+                     httpGet:
+                         path: /readyz
+                         port: 8080
+                     initialDelaySeconds: 5
+                     periodSeconds: 3
+                     failureThreshold: 3
+                    livenessProbe:
+                     httpGet:
+                         path: /healthz
+                         port: 8080
+                     initialDelaySeconds: 5
+                     periodSeconds: 3
+                     failureThreshold: 3
+                    env:
+                     - name: APP_MESSAGE
+                       valueFrom:
+                        configMapKeyRef:
+                         name: web-config
+                         key: APP_MESSAGE
+    strategy:
+       type: RollingUpdate
+       rollingUpdate:
+          maxSurge: 0%
+          maxUnavailable: 25%
