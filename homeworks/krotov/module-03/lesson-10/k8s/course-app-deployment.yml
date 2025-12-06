@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "python-course-app-lesson10"
+  name: "python-course-app-lesson10-deployment"
+  namespace: krotovhh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "python-course-app-lesson10"
+  template:
+    metadata:
+      labels:
+        app: "python-course-app-lesson10"
+    spec:
+      containers:
+      - env:
+        - name: APP_STORE
+          value: redis
+        - name: APP_REDIS_URL
+          value: redis://redis7:6379
+
+        image: krotovhh/course-app:2.0
+        imagePullPolicy: Always
+        name: python-course-app-lesson10
+
+        ports:
+        - containerPort: 80
+
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+
+        livenessProbe:  
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          failureThreshold: 2
+          successThreshold: 1
+
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi  
+      
+      restartPolicy: Always
+  # strategy: 
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 4
+...
+

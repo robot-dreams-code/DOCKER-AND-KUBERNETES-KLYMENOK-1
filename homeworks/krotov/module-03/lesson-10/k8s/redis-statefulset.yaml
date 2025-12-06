@@ -1,0 +1,69 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: "redis7"
+  name: "redis7-statefulset"
+  namespace: krotovhh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "redis7"
+  template:
+    metadata:
+      labels:
+        app: "redis7"
+
+    spec:
+      containers:
+      - env:
+
+        name: redis7
+        image: redis:7-alpine
+        imagePullPolicy: Always
+
+        volumeMounts:
+          - name: redis-data
+            mountPath: /data
+        
+        ports:
+        - containerPort: 6379
+
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1024Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi  
+
+        readinessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+
+        livenessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          failureThreshold: 3
+          initialDelaySeconds: 20
+          periodSeconds: 20
+          successThreshold: 1
+
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
