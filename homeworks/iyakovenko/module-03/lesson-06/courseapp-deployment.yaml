@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  labels:
+    app: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      initContainers:
+      - name: check-redis-ready
+        image: busybox:stable
+        command: ['sh','-c', 'until nslookup redis-service.default.svc.cluster.local; do echo waiting for redis FQDN; sleep 2; done;']
+      containers:
+      - name: main-course-app
+        image: course-app-main:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_STORE
+          value: "redis"
+        - name: APP_REDIS_HOST
+          value: "redis-service"
+        - name: APP_REDIS_PORT
+          value: "6379"
+

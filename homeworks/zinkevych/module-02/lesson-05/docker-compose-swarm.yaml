@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+  course-app:
+    image: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=HEY! NEW WELCOME MESSAGE!
+      - APP_STORE=redis
+      - APP_DB_PATH=/data/app.db
+      - APP_REDIS_URL=redis://redis:6379/0
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    deploy:
+      replicas: 2
+      # Restart policy: Swarm automatically restarts containers that exit with non-zero code
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      # Update config: Rolling updates - updates one replica at a time with delay between updates
+      # Longer delay ensures Redis is ready before app containers start
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    command: ["redis-server", "--appendonly", "yes"]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  app-network:
+    # Overlay network: Enables multi-host networking across Swarm nodes using VXLAN
+    driver: overlay
+    attachable: true
+
+volumes:
+  redis-data:
+    driver: local
