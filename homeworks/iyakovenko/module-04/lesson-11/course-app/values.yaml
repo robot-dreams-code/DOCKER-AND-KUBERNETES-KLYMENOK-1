@@ -1,0 +1,60 @@
+# course-app-chart/values.yaml
+
+replicaCount: 10
+
+image:
+  repository: igyadmin/course-app-main
+  pullPolicy: IfNotPresent
+  tag: "v1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: courseapp.k8s.com822.dom
+  tls:
+    enabled: true
+    secretName: course-app-tls
+
+probes:
+  liveness:
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readiness:
+    path: /readyz
+    port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+redis:
+  image:
+    repository: bitnami/redis
+    tag: "latest"
+    pullPolicy: IfNotPresent  
+  host: "course-app-redis-master.testlab.svc.k8s.com822.dom"
+  port: "6379"
+
