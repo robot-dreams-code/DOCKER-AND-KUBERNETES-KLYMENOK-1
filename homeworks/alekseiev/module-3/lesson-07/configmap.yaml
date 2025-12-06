@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+data:
+  APP_MESSAGE: "K8S App Message"
+  APP_STORE: "sqlite"
+  APP_DB_PATH: "/data/app.db"
