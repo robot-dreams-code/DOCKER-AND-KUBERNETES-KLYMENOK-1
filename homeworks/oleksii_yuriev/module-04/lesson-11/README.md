@@ -56,6 +56,7 @@ type: Opaque
 stringData:
   APP_REDIS_URL: "redis://:password@redis-master:6379/0"
 
+```
 
 ## Apply CM and Secret
 ```bash
