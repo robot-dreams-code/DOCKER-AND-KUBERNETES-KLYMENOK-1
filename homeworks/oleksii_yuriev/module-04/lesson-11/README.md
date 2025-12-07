@@ -25,6 +25,7 @@ Certificate:
 ## Create Secret for Ingress
 ```bash
 kubectl create secret tls app-tls --cert=cert.pem  --key=key.pem
+```
 
 ## Create CM
 ```bash
