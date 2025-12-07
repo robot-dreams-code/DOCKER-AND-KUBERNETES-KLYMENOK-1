@@ -15,4 +15,4 @@ upgrade:
 	helm upgrade $(RELEASE) course-app -f course-app/values.yaml --set-file tls.crt=$(CRT) --set-file tls.key=$(KEY) -n $(NAMESPACE) --create-namespace -i
 
 purge:
-	helm delete namespaces $(NAMESPACE)
+	kubectl delete namespaces rd
