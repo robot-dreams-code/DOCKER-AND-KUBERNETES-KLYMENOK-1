@@ -1,0 +1,23 @@
+# Please, approve me to stay in history :)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-pv
+  namespace: lab
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteMany
+    - ReadWriteOnce
+  capacity:
+    storage: 100M
+  local:
+    path: /tmp
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: "kubernetes.io/hostname"
+              operator: In
+              values:
+                - lima-rancher-desktop

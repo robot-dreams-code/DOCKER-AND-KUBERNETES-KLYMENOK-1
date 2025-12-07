@@ -5,3 +5,5 @@ metadata:
   namespace: lab
 data:
   APP_MESSAGE: "Hello, Robot Dreams!"
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis-svc.lab.svc.cluster.local:6379"

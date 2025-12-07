@@ -1,0 +1,15 @@
+# Please, approve me to stay in history :)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-pvc
+  namespace: lab
+spec:
+  volumeName: app-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10M
+    limits:
+      storage: 10M
