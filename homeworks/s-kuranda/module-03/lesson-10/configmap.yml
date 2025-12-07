@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: lesson-10
+data:
+  TZ: "Europe/Kiev"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+  APP_LANGUAGE: "en_US:en"
+  APP_MESSAGE: "Robot Dreams - Lesson 10"
+  APP_STORE: "redis"
