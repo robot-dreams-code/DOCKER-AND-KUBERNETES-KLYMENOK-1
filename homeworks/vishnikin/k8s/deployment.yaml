@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: course-app
-  namespace: tmp
+  namespace: default
 spec:
-  replicas: 3
+  replicas: 10
   selector:
     matchLabels:
       app: course-app
@@ -13,9 +13,36 @@ spec:
       labels:
         app: course-app
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: course-app
           image: avishnikin/k8s-sandbox:latest
+          env:
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_NAME
+                  optional: false
+            - name: APP_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_LOG_LEVEL
+                  optional: false
+            - name: APP_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: APP_TIMEOUT
+                  optional: true
+            - name: FEATURE_FLAG
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: FEATURE_FLAG
+                  optional: true
           ports:
           - containerPort: 8089
           resources:
@@ -25,3 +52,8 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "250m"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1

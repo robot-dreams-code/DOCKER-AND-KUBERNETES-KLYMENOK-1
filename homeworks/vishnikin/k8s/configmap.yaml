@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: default
+data:
+  APP_NAME: "Course App"
+  APP_MODE: "development"
+  APP_LOG_LEVEL: "info"
+  APP_TIMEOUT: "5s"
+  FEATURE_FLAG: "true"
+  app.conf: |
+    log_level=info
+    workers=4
+    timeout=5s
