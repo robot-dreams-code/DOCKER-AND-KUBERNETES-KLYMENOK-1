@@ -1,27 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-app
-  namespace: hw08
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.global.namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.app.replicas }}
   selector:
     matchLabels:
-      app: test-app
+      app: {{ .Values.app.name }}
   template:
     metadata:
       labels:
-        app: test-app
+        app: {{ .Values.app.name }}
     spec:
       containers:
-      - name: test-app
-        image: gen921/hw07:latest
+      - name: {{ .Values.app.name }}
+        image: {{ .Values.app.image.image }}
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.app.image.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.app.readinessProbe.httpGet.path }}
+            port: {{ .Values.app.readinessProbe.httpGet.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /healthzq
-            port: 8081
+            path: {{ .Values.app.livenessProbe.httpGet.path }}
+            port: {{ .Values.app.livenessProbe.httpGet.port }}
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 2
