@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "app-chart.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "app-chart.labels" . | nindent 4 }}
 spec:
@@ -27,7 +28,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "app-chart.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -40,10 +40,17 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: APP_MESSAGE
+              value: {{ .Values.environment.APP_MESSAGE | quote }}
+            - name: APP_STORE
+              value: {{ .Values.environment.APP_STORE | quote }}
+            - name: APP_REDIS_URL
+              value: {{ .Values.environment.APP_REDIS_URL | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.environment.REDIS_PORT | quote }}          
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
+            - containerPort: {{ .Values.containerPort }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

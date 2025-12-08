@@ -1,7 +1,7 @@
-bash-3.2$ helm install app-redis bitnami/redis
+bash-3.2$ helm install app-redis bitnami/redis --namespace mod03-less11 --create-namespace
 NAME: app-redis
-LAST DEPLOYED: Sun Dec  7 13:47:37 2025
-NAMESPACE: default
+LAST DEPLOYED: Sun Dec  7 19:08:46 2025
+NAMESPACE: mod03-less11
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
@@ -18,25 +18,25 @@ APP VERSION: 8.4.0
 
 Redis&reg; can be accessed on the following DNS names from within your cluster:
 
-    app-redis-master.default.svc.cluster.local for read/write operations (port 6379)
-    app-redis-replicas.default.svc.cluster.local for read-only operations (port 6379)
+    app-redis-master.mod03-less11.svc.cluster.local for read/write operations (port 6379)
+    app-redis-replicas.mod03-less11.svc.cluster.local for read-only operations (port 6379)
 
 
 
 To get your password run:
 
-    export REDIS_PASSWORD=$(kubectl get secret --namespace default app-redis -o jsonpath="{.data.redis-password}" | base64 -d)
+    export REDIS_PASSWORD=$(kubectl get secret --namespace mod03-less11 app-redis -o jsonpath="{.data.redis-password}" | base64 -d)
 
 To connect to your Redis&reg; server:
 
 1. Run a Redis&reg; pod that you can use as a client:
 
-   kubectl run --namespace default redis-client --restart='Never'  --env REDIS_PASSWORD=$REDIS_PASSWORD  --image registry-1.docker.io/bitnami/redis:latest --command -- sleep infinity
+   kubectl run --namespace mod03-less11 redis-client --restart='Never'  --env REDIS_PASSWORD=$REDIS_PASSWORD  --image registry-1.docker.io/bitnami/redis:latest --command -- sleep infinity
 
    Use the following command to attach to the pod:
 
    kubectl exec --tty -i redis-client \
-   --namespace default -- bash
+   --namespace mod03-less11 -- bash
 
 2. Connect using the Redis&reg; CLI:
    REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h app-redis-master
@@ -44,7 +44,7 @@ To connect to your Redis&reg; server:
 
 To connect to your database from outside the cluster execute the following commands:
 
-    kubectl port-forward --namespace default svc/app-redis-master 6379:6379 &
+    kubectl port-forward --namespace mod03-less11 svc/app-redis-master 6379:6379 &
     REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -h 127.0.0.1 -p 6379
 WARNING: Rolling tag detected (bitnami/redis:latest), please note that it is strongly recommended to avoid using rolling tags in a production environment.
 +info https://techdocs.broadcom.com/us/en/vmware-tanzu/application-catalog/tanzu-application-catalog/services/tac-doc/apps-tutorials-understand-rolling-tags-containers-index.html
@@ -61,4 +61,3 @@ WARNING: There are "resources" sections in the chart not set. Using "resourcesPr
   - replica.resources
   - master.resources
 +info https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-bash-3.2$ 
