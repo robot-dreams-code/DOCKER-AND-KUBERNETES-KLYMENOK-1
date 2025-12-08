@@ -62,4 +62,4 @@
 
 ## PS: Дуже цікава практика!
 
-![Pods](img/pods.png)
+![Pods](img/Pods.png)
