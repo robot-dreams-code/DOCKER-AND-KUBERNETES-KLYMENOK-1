@@ -3,7 +3,7 @@
 1. Add redis repo:
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
+helm dependency update ./homeworks/yarovskyi/module-4/lesson-11/course-app
 ```
 
 2. Check templates:
