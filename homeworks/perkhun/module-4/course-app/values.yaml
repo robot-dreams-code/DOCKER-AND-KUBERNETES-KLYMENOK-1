@@ -15,5 +15,5 @@ ingress:
   host: course-app.127.0.0.1.sslip.io
 
 redis:
-  host: my-redis-master
+  host: dragonfly-sample
   port: 6379
