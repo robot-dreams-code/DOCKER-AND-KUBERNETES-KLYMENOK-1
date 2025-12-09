@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server"]
+          args: ["--requirepass", "password"]
+          env:
+            - name: TZ
+              value: "Europe/Kiev"
+            - name: LANG
+              value: "en_US.UTF-8"
+            - name: LC_ALL
+              value: "en_US.UTF-8"
+            - name: LANGUAGE
+              value: "en_US:en"
+
+

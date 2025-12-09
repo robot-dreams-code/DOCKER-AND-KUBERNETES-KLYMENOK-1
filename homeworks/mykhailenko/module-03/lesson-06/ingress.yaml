@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lab-ingress
+  namespace: lab
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: ingress.local # Works by adding this entry into /etc/hosts
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lab-svc
+                port:
+                  name: api
+    - host: 127-0-0-1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lab-svc
+                port:
+                  name: api
