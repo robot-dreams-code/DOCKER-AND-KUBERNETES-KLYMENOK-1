@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-deploy
+  namespace: lab
+  labels:
+    env: qa
+spec:
+  progressDeadlineSeconds: 30
+  replicas: 10
+  selector:
+    matchLabels:
+      env: qa
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      name: lab-pod
+      namespace: lab
+      labels:
+        env: qa
+    spec:
+      containers:
+        - name: app
+          image: mmykhailenko/lesson-04:dev
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: lab-cm
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080

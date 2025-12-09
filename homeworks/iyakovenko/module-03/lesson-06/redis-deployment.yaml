@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels: 
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1
+  template:
+    metadata: 
+      labels: 
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine 
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-host-storage
+          mountPath: /data
+      volumes:
+      - name: redis-host-storage
+        hostPath:
+          path: /home/igyadmin/course-app/redis_data 
+          type: DirectoryOrCreate

@@ -1,0 +1,4 @@
+replicaCount: 1
+containerPort: 8080
+servicePort: 80
+redisPort: 6379

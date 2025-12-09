@@ -1,0 +1,44 @@
+# Image used from previous lesson, course-app application
+# So small changes were applied to application to create new image tag 2.0 to see the update rollout process
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "python-course-app-lesson07"
+  name: "python-course-app-lesson07-deployment"
+  namespace: krotovhh
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: "python-course-app-lesson07"
+  template:
+    metadata:
+      labels:
+        app: "python-course-app-lesson07"
+    spec:
+      containers:
+      - env:
+        image: krotovhh/course-app:2.0
+        imagePullPolicy: Always
+        name: python-course-app-lesson07
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi  
+      restartPolicy: Always
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      # amount of pods that can be created over replicas amount set while updating
+      maxSurge: 1
+      # amount of pods that can be unavailable while update is in progress 
+      maxUnavailable: 4
+...
+

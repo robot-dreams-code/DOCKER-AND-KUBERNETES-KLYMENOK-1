@@ -1,0 +1,123 @@
+-- Поточна версія Docker
+# docker version
+Client:
+ Version:           28.3.3
+ API version:       1.51
+ Go version:        go1.24.5
+ Git commit:        980b856
+ Built:             Fri Jul 25 11:33:03 2025
+ OS/Arch:           darwin/arm64
+ Context:           orbstack
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          28.3.3
+  API version:      1.51 (minimum version 1.24)
+  Go version:       go1.24.5
+  Git commit:       bea959c
+  Built:            Fri Jul 25 11:34:22 2025
+  OS/Arch:          linux/arm64
+  Experimental:     false
+ containerd:
+  Version:          v2.1.4
+  GitCommit:        75cb2b7193e4e490e9fbdc236c0e811ccaba3376
+ runc:
+  Version:          1.3.1
+  GitCommit:        e6457afc48eff1ce22dece664932395026a7105e
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+
+-- Завантажуємо nginx:latest
+# docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+a16e55119267: Pull complete
+a1ae3a7c83f6: Pull complete
+71b4d71c88c5: Pull complete
+d3922ca80d33: Pull complete
+4132e6d1f86a: Pull complete
+4b98b83d5d16: Pull complete
+0e927f889d7d: Pull complete
+Digest: sha256:f547e3d0d5d02f7009737b284abc87d808e4252b42dceea361811e9fc606287f
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+
+-- Перевіряємо наявність
+# docker image ls | grep nginx
+nginx                                                               latest             46fabdd7f288   44 hours ago   172MB
+
+-- Тегуємо поточний імедж (для зручності / варіативності)
+# docker image tag nginx:latest nginx:local
+
+-- Перевіряємо результат
+# docker image ls | grep nginx
+nginx                                                               latest             46fabdd7f288   44 hours ago   172MB
+nginx                                                               local              46fabdd7f288   44 hours ago   172MB
+
+-- Запускаємо detached-контейнер nginx з публікацією на localhost (127.0.0.1) по порту 8080
+# docker run --rm -d -p 127.0.0.1:8080:80 nginx:local
+2f9dd5c3c5dfa56caa64617703ce8259507404d0c1c6ddf701f61820f65165fb
+
+-- Перевірка наявності результату
+# curl http://localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+-- Запит списку поточних контейнерів (активних і зупинених, за наявності)
+# docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS        PORTS                    NAMES
+2f9dd5c3c5df   nginx:local   "/docker-entrypoint.…"   2 seconds ago   Up 1 second   127.0.0.1:8080->80/tcp   upbeat_dijkstra
+
+-- Створення ще 9 контейнерів з різними портами публікації
+# for i in {81..89}; do docker run --rm -d -p "127.0.0.1:80$i:80" nginx:local; done
+ca3e48bbe9c3ad0a6271daeed31bc076b1fee85fac4871d531b72cec2dbc1728
+788e79b2434d0751f6af950900ba342ecc0c3ae3abdf3ddee5d58a530e20db02
+39ca9e8a8c75624d244f784822ab6a9f6183e8f39fe6f2137f1c8c044a5de8dc
+57281ff669fc9ab8855bcf41a0628036e403d1b062c22dee78e12ee369ad7287
+ef1f709a3c1a68e02981ba434f0a573cebd1a93cd613272c687eb26b8493d12a
+f57ec1f87cbd3ea277f992b8cf5eca3d62812da7c335c5efcfad99f109b4d792
+2b319ea66bd476e0314cad77655f47f51ddf863b0e28a96e60d6133dedba0259
+2d545648d4e6729def467a86293683afda4163dd3b034cd779962dd4e03f33eb
+7d08b83d0f7c11965ac03835d572a9b5db335cb29cc8e948a403db2c499ecca5
+
+# docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS          PORTS                    NAMES
+7d08b83d0f7c   nginx:local   "/docker-entrypoint.…"   26 seconds ago   Up 26 seconds   127.0.0.1:8089->80/tcp   quizzical_satoshi
+2d545648d4e6   nginx:local   "/docker-entrypoint.…"   26 seconds ago   Up 26 seconds   127.0.0.1:8088->80/tcp   vibrant_goodall
+2b319ea66bd4   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8087->80/tcp   eloquent_pike
+f57ec1f87cbd   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8086->80/tcp   zealous_wozniak
+ef1f709a3c1a   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8085->80/tcp   magical_chaplygin
+57281ff669fc   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8084->80/tcp   gallant_ritchie
+39ca9e8a8c75   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8083->80/tcp   pedantic_wiles
+788e79b2434d   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 26 seconds   127.0.0.1:8082->80/tcp   interesting_ganguly
+ca3e48bbe9c3   nginx:local   "/docker-entrypoint.…"   27 seconds ago   Up 27 seconds   127.0.0.1:8081->80/tcp   happy_liskov
+2f9dd5c3c5df   nginx:local   "/docker-entrypoint.…"   9 minutes ago    Up 9 minutes    127.0.0.1:8080->80/tcp   upbeat_dijkstra
+
+-- Видаляємо всі контейнери (принаймі наразі ця команда прийнятна)
+# docker ps --format "{{.Names}}" | xargs docker rm --force
+
+-- Перевіряємо
+# docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES

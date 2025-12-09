@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "course-app-andrii-kharkovyi.fullname" . }}-config
+  labels:
+    {{- include "course-app-andrii-kharkovyi.labels" . | nindent 4 }}
+data:
+  APP_MESSAGE: {{ .Values.config.appMessage | quote }}
+  APP_STORE: {{ .Values.config.appStore | quote }}
+  APP_DB_PATH: {{ .Values.config.appDbPath | quote }}
+  APP_REDIS_URL: {{ .Values.config.redisUrl | quote }}
