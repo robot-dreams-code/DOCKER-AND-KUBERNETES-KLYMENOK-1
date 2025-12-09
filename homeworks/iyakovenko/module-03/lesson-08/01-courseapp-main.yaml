@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-external-service
+  labels:
+    app: course-app
+spec:
+  selector:
+    app: course-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  labels:
+    app: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      initContainers:
+      - name: check-redis-ready
+        image: busybox:stable
+        command: ['sh','-c', 'until nslookup redis-service.default.svc.cluster.local; do echo waiting for redis FQDN; sleep 2; done;']
+      containers:
+      - name: main-course-app
+        image: igyadmin/course-app-main:v1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_STORE
+          value: "redis"
+        - name: APP_REDIS_HOST
+          value: "redis-service"
+        - name: APP_REDIS_PORT
+          value: "6379"
+        - name: APP_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_MESSAGE
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
