@@ -1,0 +1,47 @@
+services:
+  course-app:
+    build:
+      context: ../../../../
+      dockerfile: homeworks/zinkevych/module-02/lesson-05/Dockerfile
+    container_name: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_MESSAGE=HEY! NEW WELCOME MESSAGE!
+      - APP_STORE=redis
+      - APP_DB_PATH=/data/app.db
+      - APP_REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    command: ["redis-server", "--appendonly", "yes"]
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+

@@ -1,0 +1,39 @@
+#Kubectl commands
+#Homework lesson6
+#16 11 2025
+
+docker login
+docker tag lesson05_course-app:latest eugene45ua/course-app:latest
+
+docker images
+REPOSITORY                 TAG        IMAGE ID       CREATED       SIZE
+eugene45ua/course-app      latest     83c9355bc860   7 days ago    171MB
+
+docker push eugene45ua/course-app
+
+https://hub.docker.com/repository/docker/eugene45ua/course-app/
+
+kubectl config get-contexts
+kubectl config use-context rancher-desktop
+kubectl config get-contexts
+kubectl get nodes
+NAME              STATUS   ROLES                  AGE     VERSION
+desktop-jhe581a   Ready    control-plane,master   7m58s   v1.33.5+k3s1
+
+
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f redis-service.yaml
+kubectl apply -f course-app-deployment.yaml
+kubectl apply -f course-app-service.yaml
+
+#apply all at once
+kubectl apply -f .
+
+kubectl get pods
+kubectl get svc
+kubectl get deploy
+kubectl get nodes -o wide
+
+D:\Kubernetes\2025\lesson06>curl http://localhost:30080/healthz
+{"status":"ok"}
+
