@@ -1,5 +1,7 @@
 replicaCount: 3
 
+namespace: dtimchuk-dev
+
 image:
   repository: dmitrytimchuk/course-app
   pullPolicy: IfNotPresent
