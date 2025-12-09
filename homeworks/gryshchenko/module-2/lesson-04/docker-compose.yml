@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  course-app:
+    build:
+      context: ../../../../  # context = lesson-04
+      dockerfile: homeworks/gryshchenko/module-2/lesson-04/Dockerfile
+    container_name: course-app
+    ports:
+      - "8080:8080"
+    environment:
+      APP_MESSAGE: "Hello from Docker Compose!"
+      APP_STORE: redis
+      APP_REDIS_URL: redis://redis:6379/0
+      APP_DB_PATH: /data/app.db
+    volumes:
+      - ./data:/data
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:
