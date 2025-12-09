@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: dtimchuk-dev
+  labels:
+    app: course-app
+    env: development
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # Fast update with temporary overload of resources
+      maxUnavailable: 5  # could be unavailable 5 pods (50%) => 10 total pods
+      maxSurge: 5        # could be created 5 additional pods (50%) => 15 total pods
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+        env: development
+    spec:
+      containers:
+      - name: course-app
+        image: dmitrytimchuk/course-app:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_NAME
+        - name: APP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_VERSION
+        - name: APP_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_ENVIRONMENT
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: LOG_LEVEL
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: MESSAGE
