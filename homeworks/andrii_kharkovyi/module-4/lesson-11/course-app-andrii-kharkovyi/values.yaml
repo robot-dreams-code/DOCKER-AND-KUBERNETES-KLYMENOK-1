@@ -131,4 +131,4 @@ config:
   appMessage: "Course App by Andrii Kharkovyi 111"
   appStore: "sqlite"
   appDbPath: "/data/app.db"
-  redisUrl: "redis://course-redis.n8n-workshop.svc.cluster.local:6379/0"
+  redisUrl: "redis://dragonfly.course-app-andrii-kharkovyi.svc.cluster.local:6379/0"
