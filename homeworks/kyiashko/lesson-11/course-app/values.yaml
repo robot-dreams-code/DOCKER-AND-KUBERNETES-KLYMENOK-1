@@ -1,0 +1,35 @@
+global:
+  namespace: hw11
+
+app:
+  replicas: 2
+  name: course-app
+  image:
+    name: course-app
+    image: gen921/hw07:latest
+    port: 8080
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: 8080
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+
+appConfig:
+  appLogLevel: debug
+  appName: Course App hw07-NEW
+  appRedisUrl: redis://redis-master:6379/0
+  appStore: redis
+  appTimeout: 5s
+
+
+ingress:
+  tls:
+    dns: app-helm.local
+
+
+service:
+  type: ClusterIP
+  port: 8080

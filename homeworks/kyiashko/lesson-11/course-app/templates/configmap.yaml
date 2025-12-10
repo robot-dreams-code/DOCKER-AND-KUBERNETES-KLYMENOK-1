@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  APP_NAME: "{{ .Values.appConfig.appName }}"
+  APP_LOG_LEVEL: "{{ .Values.appConfig.appLogLevel }}"
+  APP_STORE: "{{ .Values.appConfig.appStore }}"
+  APP_REDIS_URL: "{{ .Values.appConfig.appRedisUrl }}"
+  APP_TIMEOUT: "{{ .Values.appConfig.appTimeout }}"
