@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rd
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      name: course-app
+      labels:
+        app: course-app
+    spec:
+      serviceAccountName: db-viewer
+      containers:
+        - name: course-app
+          image: vitaliyavramenko/lesson-6:1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: app-config
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
