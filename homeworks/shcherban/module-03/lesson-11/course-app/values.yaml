@@ -1,0 +1,42 @@
+image:
+  repository: illuv/course-app
+  tag: latest
+  replicas: 10
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - course-app.local
+      secretName: tls-secret
+  rules:
+    - host: course-app.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: course-app-service
+                port:
+                  number: 80
+
+data:
+  appMessage: "HELLO"
+  appStore: "redis"
+  appRedisUrl: "redis://redis-master:6379"
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8080
