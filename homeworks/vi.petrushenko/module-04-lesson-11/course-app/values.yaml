@@ -1,0 +1,44 @@
+replicaCount: 3
+
+image:
+  repository: vvpet/course-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: course-app.207.127.90.43.sslip.io   # ← твой внешний IP
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  APP_STORE: redis
+  APP_REDIS_URL: "redis://redis-0.redis:6379"
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+# Отключаем всё, что мешает (новые шаблоны Helm 3.13+)
+serviceAccount:
+  create: false
+
+httpRoute:
+  enabled: false
+
+gateway:
+  enabled: false
+
+metrics:
+  enabled: false
+
+autoscaling:
+  enabled: false

@@ -1,0 +1,17 @@
+# dragonfly.yaml (Оновлена версія без секції service)
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: my-dragonfly-instance 
+  namespace: default
+spec:
+  # Кількість реплік (обов'язкове поле)
+  replicas: 1
+  # Образ Docker (обов'язкове поле)
+  image: "docker.io/dragonflydb/dragonfly:latest"
+  # Налаштування ресурсів для Pod (бажано, але не обов'язково)
+  resources:
+    limits:
+      memory: "1Gi"
+    requests:
+      memory: "512Mi"
