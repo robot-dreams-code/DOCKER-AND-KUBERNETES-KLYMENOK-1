@@ -1,0 +1,35 @@
+---
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: db-viewer
+  namespace: course-app-andrii-kharkovyi
+
+---
+# Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: db-readonly
+  namespace: course-app-andrii-kharkovyi
+rules:
+  - apiGroups: ["dragonflydb.io"]
+    resources: ["dragonflies"]
+    verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-viewer-binding
+  namespace: course-app-andrii-kharkovyi
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: db-readonly
+subjects:
+  - kind: ServiceAccount
+    name: db-viewer
+    namespace: course-app-andrii-kharkovyi
