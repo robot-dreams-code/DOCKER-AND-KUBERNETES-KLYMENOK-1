@@ -1,0 +1,12 @@
+apiVersion: v2
+name: course-app
+description: A Helm chart for Course Application with Redis integration
+type: application
+version: 0.1.1
+appVersion: "lesson-11"
+
+dependencies:
+  - name: redis
+    version: "24.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
