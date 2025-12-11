@@ -1,0 +1,33 @@
+replicas: 1
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: vitaliyavramenko/lesson-6
+  tag: latest
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+pod:
+  port: 8080
+  readyPath: /readyz
+  livePath: /healthz
+
+service:
+  port: 80
+  type: ClusterIP
+
+ingress:
+  className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/rewrite-target: /
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  host: course-app.local
+  path: /
+  pathType: Prefix
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
