@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "course-app.fullname" . }}
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "course-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "course-app.name" . }}
+    spec:
+      containers:
+        - name: course-app
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ include "course-app.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
