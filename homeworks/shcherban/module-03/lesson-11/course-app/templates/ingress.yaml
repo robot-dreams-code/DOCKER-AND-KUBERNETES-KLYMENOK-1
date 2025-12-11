@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+  rules:
+{{ toYaml .Values.ingress.rules | indent 4 }}

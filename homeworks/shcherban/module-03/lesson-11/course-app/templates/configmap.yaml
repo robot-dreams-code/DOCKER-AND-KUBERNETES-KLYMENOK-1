@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  APP_MESSAGE: "{{ .Values.data.appMessage }}"
+  APP_STORE: "{{ .Values.data.appStore }}"
+  APP_REDIS_URL: "{{ .Values.data.appRedisUrl }}"
