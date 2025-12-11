@@ -82,3 +82,5 @@ spec:
       targetPort: 8080 
       protocol: TCP
       name: course-app
+      protocol: TCP
+      name: course-app
