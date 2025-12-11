@@ -1,0 +1,24 @@
+replicaCount: 1
+
+image:
+  repository: my-build
+  pullPolicy: IfNotPresent
+  tag: "2.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  host: course-app.127.0.0.1.sslip.io
+  
+  tls:
+    enabled: true
+    secretName: course-app-tls
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  storageSize: 1Gi
