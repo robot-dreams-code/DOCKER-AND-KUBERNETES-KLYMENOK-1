@@ -21,17 +21,9 @@ spec:
         - name: course-app
           image: vitaliyavramenko/lesson-6:1
           imagePullPolicy: IfNotPresent
-          env:
-            - name: APP_STORE
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: APP_STORE
-            - name: APP_REDIS_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: APP_REDIS_URL
+          envFrom:
+            - configMapRef:
+                name: app-config
           ports:
             - containerPort: 8080
               protocol: TCP
