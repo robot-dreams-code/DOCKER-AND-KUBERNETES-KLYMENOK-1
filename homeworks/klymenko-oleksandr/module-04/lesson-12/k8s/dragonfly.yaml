@@ -1,0 +1,17 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+  namespace: dev
+spec:
+  replicas: 1
+  image: ghcr.io/dragonflydb/dragonfly:v1.35.1
+  serviceSpec:
+    type: ClusterIP
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

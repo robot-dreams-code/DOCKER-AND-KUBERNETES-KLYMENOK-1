@@ -1,0 +1,58 @@
+replicaCount: 2
+
+image:
+  repository: kyle21/course-app
+  tag: "1.0.1"
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: false
+
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+  nodePort: 30080
+
+config:
+  message: "Hello from ConfigMap"
+  store: "dragonfly"
+  dbPath: "/data/app.db"
+
+redis:
+  protocol: redis
+  host: dragonfly
+  port: 6379
+  url: ""
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+readinessProbe:
+  path: /healthz
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+livenessProbe:
+  path: /healthz
+  initialDelaySeconds: 10
+  periodSeconds: 20
+
+volumes:
+  data:
+    enabled: true
+    mountPath: /data
+    emptyDir: {}
+
+ingress:
+  enabled: true
+  className: traefik
+  host: course-app.local
+  tls:
+    enabled: true
+    secretName: course-app-tls
