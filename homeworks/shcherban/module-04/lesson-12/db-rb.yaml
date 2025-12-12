@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-viewer-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: db-viewer
+roleRef:
+  kind: Role
+  name: db-readonly
+  apiGroup: rbac.authorization.k8s.io
