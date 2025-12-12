@@ -28,7 +28,7 @@ spec:
         name: python-course-app-lesson10
 
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 
         readinessProbe:
           httpGet:

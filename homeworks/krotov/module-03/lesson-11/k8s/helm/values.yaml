@@ -1,0 +1,51 @@
+app:
+  name: python-course-app-lesson11
+
+image:
+  repository: krotovhh/course-app
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+namespace: krotovhh
+
+replicasCount: 1
+restartPolicy: Always
+
+service: 
+  type: ClusterIP
+  port: 8080
+  protocol: TCP
+  targetPort: 8080
+
+ingressHost: pythonapp-lesson11.local
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi 
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 2
+  successThreshold: 1
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 5
+  failureThreshold: 2
+  successThreshold: 1
+
+appEnvs:
+  APP_STORE: "redis"
+  #using new Redis instanse deployed via helm chart
+  APP_REDIS_URL: "redis://redis-lesson11-master:6379"

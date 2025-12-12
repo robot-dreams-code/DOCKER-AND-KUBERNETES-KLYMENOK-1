@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{ .Values.app.name }}"
+  name: "{{ .Values.app.name }}-deployment"
+  namespace: "{{ .Values.namespace}}"
+spec:
+  replicas: {{ .Values.replicasCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.app.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.app.name }}"
+    spec:
+      containers:
+      - env:
+        {{- range $key, $value := .Values.appEnvs }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        name: "{{ .Values.app.name }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 12}}
+        livenessProbe:  
+          {{- toYaml .Values.livenessProbe | nindent 12}}
+        resources:
+         {{- toYaml .Values.resources | nindent 12 }}
+      restartPolicy: "{{ .Values.restartPolicy }}"
+...
+

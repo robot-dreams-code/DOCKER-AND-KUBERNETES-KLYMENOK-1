@@ -1,0 +1,17 @@
+replicasCount: 3
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi 
+  limits:
+    cpu: 2000m
+    memory: 1024Mi
+
+namespace: production
+app:
+  name: python-course-app-lesson11-production
+
+appEnvs:
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis-lesson11-master:6379"
