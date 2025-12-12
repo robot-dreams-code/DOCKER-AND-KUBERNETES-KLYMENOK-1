@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: n8n-db-backup
+  namespace: n8n-workshop
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pgdump
+              image: postgres:15-alpine
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: n8n-secret
+                      key: db-password
+              command:
+                - sh
+                - -c
+                - |
+                  ts=$(date +%Y%m%d%H%M%S)
+                  echo "Starting backup ${ts}"
+                  pg_dump --host=postgres --port=5432 --username=n8n --dbname=n8n > "/tmp/n8n-${ts}.sql"
+                  ls -lh /tmp/n8n-${ts}.sql
+                  echo "Backup finished"
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 300m
+                  memory: 256Mi

@@ -1,0 +1,21 @@
+{{- if .Values.dragonfly.enabled -}}
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: {{ .Values.dragonfly.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: dragonfly
+    environment: {{ .Values.app.environment }}
+    {{- include "course-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dragonfly.replicas }}
+  image: {{ .Values.dragonfly.image.repository }}:{{ .Values.dragonfly.image.tag }}
+  resources:
+    requests:
+      cpu: {{ .Values.dragonfly.resources.requests.cpu }}
+      memory: {{ .Values.dragonfly.resources.requests.memory }}
+    limits:
+      cpu: {{ .Values.dragonfly.resources.limits.cpu }}
+      memory: {{ .Values.dragonfly.resources.limits.memory }}
+{{- end }}
