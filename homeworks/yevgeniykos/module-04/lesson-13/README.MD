@@ -6,7 +6,7 @@
 
 Створіть новий публічний репозиторій на GitHub з назвою rd-fluxcd-lesson. Він має бути пустим (або з README).
 
-### https://github.com/rdlsolutions/rd-fluxcd-lesson/tree/main
+### <https://github.com/rdlsolutions/rd-fluxcd-lesson/tree/main>
 
 Ініціалізуйте Flux CD у вашому локальному кластері (Rancher Desktop), прив'язавши його до цього репозиторію.
 
@@ -75,7 +75,6 @@ Resources & Autoscaling:
 
 Підказка: Вам потрібно створити два об'єкти типу Kustomization (API kustomize.toolkit.fluxcd.io/v1). Ці маніфести найкраще покласти у папку clusters/my-cluster у вашому git-репозиторії — тоді Flux підхопить їх автоматично, бо він вже слухає цю папку.
 
-
 Перевірка (Definition of Done)
 У GitHub репозиторії rd-fluxcd-lesson є структура base, overlays та clusters.
 Команда flux get kustomizations показує три об'єкти в статусі Ready: flux-system (системний), app-dev та app-prod (ваші).
@@ -83,7 +82,6 @@ Resources & Autoscaling:
 В development запущено 1 под застосунку + піднявся інстанс Dragonfly (через оператор).
 В production запущено 3 поди застосунку, Dragonfly кластер з 2-х реплік + працює HPA
 Drift Check: Якщо видалити сервіс у production руками (kubectl delete svc ...), Flux має відновити його протягом хвилини.
-
 
 ## Формат здачі: Посилання на ваш публічний репозиторій rd-fluxcd-lesson
 
