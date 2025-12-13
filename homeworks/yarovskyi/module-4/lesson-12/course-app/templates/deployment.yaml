@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "app.lables" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app.lables" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: {{ .Values.image.initContainers.initStorageCheck.name }}
+          image: {{ .Values.image.initContainers.initStorageCheck.repository }}:{{ .Values.image.initContainers.initStorageCheck.tag }}
+          command:
+            {{- toYaml .Values.image.initContainers.initStorageCheck.command | nindent 12 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}
+          imagePullPolicy: {{ .Values.image.app.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.image.app.containerPort }}
+          resources:
+            {{- toYaml .Values.image.app.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.image.app.probe.liveness.path }}
+              port: {{ .Values.image.app.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.image.app.probe.readiness.path }}
+              port: {{ .Values.image.app.containerPort }}
+      restartPolicy: {{ .Values.image.restartPolicy }}
