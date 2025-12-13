@@ -1,0 +1,6 @@
+dependencies:
+- name: dragonfly-operator
+  repository: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
+  version: v1.3.1
+digest: sha256:3acbab1cef99569bd9efd126315e242f49a337c2f3fdc25c34cbafb5066fd5ce
+generated: "2025-12-13T21:29:49.624466+02:00"

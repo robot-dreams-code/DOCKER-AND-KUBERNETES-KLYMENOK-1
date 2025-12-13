@@ -1,0 +1,91 @@
+app:
+  name: course-app
+  replicaCount: 3
+
+  image:
+    repository: viktor1sss/course-app
+    tag: lesson-08
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  env:
+    APP_STORE: "redis"
+    APP_MESSAGE: "Docker and Kubernetes Course App Hello Viktor - Helm Deployment"
+    APP_REDIS_URL: "" 
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.middlewares: "{{ .Release.Namespace }}-redirect-https@kubernetescrd"
+
+  hosts:
+    - host: course-app.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls:
+    enabled: true
+    secretName: course-app-tls
+    hosts:
+      - course-app.local
+
+tls:
+  enabled: true
+  crt: |
+    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNzakNDQVpvQ0NRRCtESFpTcThEcW16QU5CZ2txaGtpRzl3MEJBUXNGQURBYk1Sa3dGd1lEVlFRRERCQmoKYjNWeWMyVXRZWEJ3TG14dlkyRnNNQjRYRFRJMU1URXlNekU0TlRRME5sb1hEVEkyTVRFeU16RTROVFEwTmxvdwpHekVaTUJjR0ExVUVBd3dRWTI5MWNuTmxMV0Z3Y0M1c2IyTmhiRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFECmdnRVBBRENDQVFvQ2dnRUJBTnZSUzA3S0ZaRkNnSG56eUxFUUg5VjQwV1YrVmU0ODNGRWpnZFBtcG1BY05rcm4KUENFTkxwVzc3RGIvRTZBSC9oSDYrL2Fuako4d0dqSTF2a3Jia1hkb3pQblpjbnBhcGl4cGZrQUxPQ2c4R2pWcQpPVnIzL1FZUHBtZkkwdGsvRzBHb0ZTSzlmNnZranc5M1prTENnZkt1RWQ4VzVzenRuSkZ6ZHh2UGNPUytid1FJCnFXa1JaRC8vNmVheGl0MUJzYlRGd2NvcEJHb09lZFhXTitnMkdCaGwyZHVmRU9BVzh0R2ZpTllHdmxUMHdJcVoKaVJNbGp2MTZJQmtKOHhtSzczRWdiZ2dvaGRFVEtVU3FmQ0dkZTROU01ZWFdLbHg1enNzUDduZnlDdk4rNWM2YgpNWmNCbm0zaXcvMmY1SDMxbk1pQkxwSUxMK1FvaGcxM0ZQUzYvSjBDQXdFQUFUQU5CZ2txaGtpRzl3MEJBUXNGCkFBT0NBUUVBU2NjT1Y3VlRpdXFnNzNnSkJ3ZS9ndUxvYzFpWlNUcFpNNWVwVlZlTk51UkRNRmM1ZWo0MGlKUnIKUFQ4ckRrRUNtOW5xSExBU09DR3hLUGtaeWVmdHprOUxUc1BSVlFibmdhelRXdzZmc3A0MVB5aE9WaVFBQ3BoKwpVOGg3RW9pRUQvZmFjNjZNRVRUb2FXMDZpNnd4eTMzVXZXcmxvcWtvb3RBTE5kUW84S3UwaGluL0kvb2dkNE9pCmhUUFlrZVdaTzJqbHgza1JUamNUUmFtZ2dBNVRJdVRrMndaam9IbTJWK2dLMTJPYXJiaWUrTXRjeFJtQjlidFkKTTU4ckxHU3piNDZLTS9QWVl2aWxva0FnVHg1ei84aGo3MEE1T29iSlVFUWROd3JiN0g5M2xJNVlJY05xK25NawpEN3JHdVhkUG1GVGhqZ0tNcUptQUhrT0sxcWFVWUE9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  key: |
+    LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2Z0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktnd2dnU2tBZ0VBQW9JQkFRRGIwVXRPeWhXUlFvQjUKODhpeEVCL1ZlTkZsZmxYdVBOeFJJNEhUNXFaZ0hEWks1endoRFM2VnUrdzIveE9nQi80Uit2djJwNHlmTUJveQpOYjVLMjVGM2FNejUyWEo2V3FZc2FYNUFDemdvUEJvMWFqbGE5LzBHRDZabnlOTFpQeHRCcUJVaXZYK3I1SThQCmQyWkN3b0h5cmhIZkZ1Yk03WnlSYzNjYnozRGt2bThFQ0tscEVXUS8vK25tc1lyZFFiRzB4Y0hLS1FScURublYKMWpmb05oZ1laZG5ibnhEZ0Z2TFJuNGpXQnI1VTlNQ0ttWWtUSlk3OWVpQVpDZk1aaXU5eElHNElLSVhSRXlsRQpxbndoblh1RFVqR0YxaXBjZWM3TEQrNTM4Z3J6ZnVYT216R1hBWjV0NHNQOW4rUjk5WnpJZ1M2U0N5L2tLSVlOCmR4VDB1dnlkQWdNQkFBRUNnZ0VCQUlFZ1J4NjNjMGZyU3RGWXRaSGRxUFdialZZVGlxTHlPWEdvYkFGd1FsZSsKK3QyeFRBOFdVVUZBTFJoNWFxdmRSaENGNFRFWloyK3pzQS9DcGxBTy96cW40NUQ1ZlZnR25Bc0d4VlVWd2gxUQpnUXpUbzNHZXI1RzU2OFNYb2RSZ1Q4Q1gzaUtVTXNWazgremY5TUJPeGtzcW1mRDA0UXVNb1NhSUwzVzB1OXFDCk5GWVRjd1FCRHRGTXI3blM2UkQwdWIva25NSndNcXBjYmJkaTZlNWZmWGtsb0ZaYW9CZXdFd3JUTkZ1aGhMM2wKRm1DTjU1M2ZjNjh5c3FKR0swZ0FVNytFUWttMUZvR1dHK2pUb0xtM0JoL2RIRVVUeFllaFUzWjMzYnNINW1TLwpjdDBjYUpDTUVQb3M1UEJUOFdTZFRJM2F0NFVlbXNoVGdQM21LMHYvRlRrQ2dZRUEray81bGpBM0VUMlVSeHRVCmIwWEUxV28xZWNlSkdVdVZKa1Q5dTAwTUpYM1lPa2hWQTFOTm8rMGxpVExwTVVpMWd0UHorN0hldGR2bmtrbkYKdGJJekcvYzlzUmdqZGFlbktCK0ppVldnQk84NHQxRk9rdmhZUXFUd0E1MjhLZXhoUE4ybTJqLzExM1VMNDg1TApEYVhpY1RXWm8wTVBVSE9LQ0tCeXJoajVRcnNDZ1lFQTRNL3ZreXAyWDdVL1ZDMmtXTUdzdnpiMU9DYUFCT2NnCnZSa0RrV2s5NWRVQ2tYM042ZGJJZHlnMWJxNTVVOTFHVSswRFFqYWE3Z3Y0d3NtM0l1SXhNV2tucnZKa0p3RjAKQURIT1hMZXlad24ydlF2ejgyWjZ0bTNXNXdRbFdnamZWM0JYUTZNa0ZCRW15TXZpeitYbTBvQUptRU5pejQzagpuKzJ1WEMyTHBJY0NnWUFlRk9abHlqMlQ4TmFWQlEvTW41SGNJL3R4T3kyYXdKNllEc3AvYSs3OXduWHQ2eXRzClR1S1J4TG95RnRBM2dBbHdRNUNhdXZHTTRYU2UvQWFxbzFQSkZKbHhZdmsvOW5uOE5HNE85eDlYK0hmVWNBMEYKVkpzbXh6T2crNS9WV2ZjRm5ZMmp4UFFDaEtwOUlobWE5a2lVV21Dd1lpckEvR0dtVDhINGNqL2lhUUtCZ1FDeQpZZ3cxZUFJSm0yV3V3N0NlaEw4djBzbnRUZzlTMUpyVHNSOTFxRTVuS2dncHJldFAydytpRFJPb3lXU1lPUUh1CjRpZ3R4K3BUYk1oc3QyWkxsYk4zQTN0cmhBWVlOVHo0VW96dVlReDhXaG1nay9WMGN5SjMwdHdzM3N0TWo3RzQKVGZuUVA0a0hLenpkSTNyTGdCOFJkR3NvbUgrMU5WOGlyWlFtckRVYnpRS0JnQkI1ZkhSZXdld2tPR3luT29RMQplalg1TVRJTythVG9FVk16b1E1cERwS0hoVURpVXcwRy9HVU44Uis2V1QyeGVySEhsdERDSjh6TmxlejNuYzRKCnhZUUFPVk0wc041UFo5aDBaWXhCZnJYQTJraEgvMkhLZVBOY1g5Qkxmd012U1dyemV3NWk2SUhZS0JOOW9LeXUKQm1CTm9qUXhESXdxYXB4UHh2Wkt1cmwyCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+
+middleware:
+  enabled: true
+  name: redirect-https
+
+dragonfly:
+  enabled: true
+  name: dragonfly-course-app
+  replicas: 1
+  image: "ghcr.io/dragonflydb/dragonfly:latest"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  rbac:
+    serviceAccount: db-viewer
+    role: db-readonly
