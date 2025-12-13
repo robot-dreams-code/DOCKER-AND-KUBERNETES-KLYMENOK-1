@@ -1,0 +1,17 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  labels:
+    app: dragonfly-lesson12
+  name: dragonfly-lesson12
+  namespace: krotovhh
+spec:
+  replicas: 2
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
