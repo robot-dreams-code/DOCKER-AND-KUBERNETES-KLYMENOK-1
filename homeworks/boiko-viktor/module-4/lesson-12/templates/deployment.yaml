@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "course-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  strategy:
+    type: {{ .Values.app.strategy.type }}
+    {{- if eq .Values.app.strategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ .Values.app.strategy.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.app.strategy.rollingUpdate.maxUnavailable }}
+    {{- end }}
+  selector:
+    matchLabels:
+      {{- include "course-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "course-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.targetPort }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.app.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.app.readinessProbe | nindent 12 }}
+          env:
+            - name: APP_STORE
+              value: {{ .Values.app.env.APP_STORE | quote }}
+            - name: APP_MESSAGE
+              value: {{ .Values.app.env.APP_MESSAGE | quote }}
+            - name: APP_REDIS_URL
+              value: {{ .Values.app.env.APP_REDIS_URL | default (printf "redis://%s.%s.svc.cluster.local:6379/0" .Values.dragonfly.name .Release.Namespace) | quote }}
