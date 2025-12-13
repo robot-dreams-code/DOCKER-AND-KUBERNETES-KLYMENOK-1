@@ -21,6 +21,7 @@ app:
 
   config:
     APP_STORE: redis
+    APP_REDIS_URL: redis://{{ .Release.Name }}-redis-master:6379
 
   probes:
     readiness:
