@@ -1,0 +1,23 @@
+{{/* Common labels */}}
+{{- define "lab.labels" }}
+labels:
+  {{ include "lab.labels.list" . | indent 2 }}
+{{- end }}
+
+{{- define "lab.labels.list" }}
+{{- range $key, $value := .Values.labels }}
+{{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
+
+{{- define "lab.metadata" }}
+metadata:
+  name: {{ .Release.Namespace }}-{{ .Template.Name | base | trimSuffix ".yaml" }}
+  namespace: {{ .Release.Namespace }}
+  {{ include "lab.labels" . | indent 2 }}
+{{- end }}
+
+{{/* Uniform service name */}}
+{{- define "lab.service.name" }}
+{{- .Release.Namespace }}-svc
+{{- end }}
