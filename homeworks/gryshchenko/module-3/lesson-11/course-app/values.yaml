@@ -1,0 +1,26 @@
+replicaCount: 4
+
+image:
+  repository: eugene45ua/course-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: course-app.local
+  tls:
+    enabled: true
+    secretName: course-app-tls
+
+config:
+  APP_MESSAGE: "Hello from ConfigMap ver2!"
+
+redis:
+  host: redis-master
+  port: 6379

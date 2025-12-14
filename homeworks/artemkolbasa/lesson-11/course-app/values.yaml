@@ -1,0 +1,29 @@
+replicaCount: 3
+
+image:
+  repository: kekotopko/course-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: ""
+  hosts:
+    - host: course-app.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: course-app-tls
+      hosts:
+        - course-app.local
+
+appConfig:
+  APP_MESSAGE: "Hello World"
+  APP_VERSION: "1"
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis-stack-server:6379/0"

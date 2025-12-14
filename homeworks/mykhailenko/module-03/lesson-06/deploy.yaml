@@ -6,6 +6,7 @@ metadata:
   labels:
     env: qa
 spec:
+  progressDeadlineSeconds: 30
   replicas: 10
   selector:
     matchLabels:
@@ -15,10 +16,6 @@ spec:
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-  replicas: 3
-  selector:
-    matchLabels:
-      env: qa
   template:
     metadata:
       name: lab-pod
@@ -34,4 +31,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: lab-cm
-            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
