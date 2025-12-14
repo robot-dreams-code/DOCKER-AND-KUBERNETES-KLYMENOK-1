@@ -1,0 +1,35 @@
+---
+# Secret with Dragonfly password used by the operator to set requirepass
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dragonfly-auth
+  namespace: default
+type: Opaque
+stringData:
+  password: "pass"
+---
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+  namespace: default
+spec:
+  # Required fields may vary by operator version; adjust after `kubectl explain dragonfly.spec`
+  replicas: 1
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+  # Pass password to enable authentication
+  env:
+    - name: DF_REQUIREPASS
+      valueFrom:
+        secretKeyRef:
+          name: dragonfly-auth
+          key: password
+  args:
+    - "--requirepass=$(DF_REQUIREPASS)"
+  service:
+    type: ClusterIP
+    port: 6379
+  # Optional persistent storage
+  storage:
+    size: 1Gi

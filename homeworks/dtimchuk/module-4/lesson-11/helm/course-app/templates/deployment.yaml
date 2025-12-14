@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "course-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "course-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: {{ .Values.strategy.type | quote }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.strategy.maxUnavailable }}
+      maxSurge: {{ .Values.strategy.maxSurge }}
+  selector:
+    matchLabels:
+      {{ include "course-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "course-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.service.targetPort }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.service.targetPort }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "course-app.fullname" . }}-config

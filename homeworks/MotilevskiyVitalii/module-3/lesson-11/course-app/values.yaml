@@ -1,0 +1,38 @@
+replicaCount: 3
+
+image:
+  repository: motilevskiy/course-app
+  tag: "1.0"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  host: test.example.loc
+  tls:
+    enabled: true
+    secretName: course-app-tls
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
+
+env:
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis-master:6379"
+
+configMap:
+  enabled: true
+  data:
+    TEST_KEY_1: "tesKeyName1"
+    TEST_KEY_2: "tesKeyName2"
+    TEST_KEY_3: "tesKeyName3"

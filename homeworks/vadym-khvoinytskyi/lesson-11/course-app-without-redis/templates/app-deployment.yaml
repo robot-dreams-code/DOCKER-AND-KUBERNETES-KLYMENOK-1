@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "course-app.fullname" . }}
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "course-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "course-app.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: course-app
+          image: ghcr.io/vadymkhvoinytskyi/course-app:latest
+          imagePullPolicy: Always
+          args: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "{{ .Values.containerPort }}", "--reload"]
+          envFrom:
+            - configMapRef:
+                name: test-config
+          ports:
+           - containerPort: {{ .Values.containerPort }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 3
+            periodSeconds: 3
+      imagePullSecrets:
+        - name: github
+  strategy:
+   type: RollingUpdate
+   rollingUpdate:
+     maxSurge: 1
+     maxUnavailable: 1

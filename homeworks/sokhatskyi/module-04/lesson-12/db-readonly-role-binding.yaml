@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-readonly-role-binding
+  namespace: dragonfly-operator-system
+subjects:
+- kind: ServiceAccount
+  name: db-viewer
+  namespace: dragonfly-operator-system 
+roleRef:
+  kind: Role
+  name: db-readonly
+  apiGroup: rbac.authorization.k8s.io

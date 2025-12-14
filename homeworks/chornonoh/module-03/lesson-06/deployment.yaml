@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: lesson-06
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: hbvhuwe/lesson-06-course-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              value: "Hello World!"

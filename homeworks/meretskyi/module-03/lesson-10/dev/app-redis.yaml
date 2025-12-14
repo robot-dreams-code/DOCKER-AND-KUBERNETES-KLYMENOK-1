@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: course-app-dev
+  name: app-redis-svc
+spec:
+  ports:
+    - port: 6379
+  clusterIP: None
+  selector:
+    app: app-redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: app-redis
+spec:
+  selector:
+    matchLabels:
+      app: app-redis # has to match .spec.template.metadata.labels
+  serviceName: "app-redis-svc"
+  replicas: 1 # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: app-redis # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

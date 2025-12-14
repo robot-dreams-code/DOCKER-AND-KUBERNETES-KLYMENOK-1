@@ -1,0 +1,5 @@
+replicaCount: 1
+containerPort: 8080
+servicePort: 80
+redisName: "redis"
+redisPort: 6379

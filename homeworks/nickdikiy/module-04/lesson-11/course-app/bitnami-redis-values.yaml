@@ -1,0 +1,21 @@
+global:
+  redis:
+    password: root
+
+architecture: replication
+replica:
+  replicaCount: 2
+
+master:
+  service:
+    type: ClusterIP
+    port: 6379
+
+volumePermissions:
+  enabled: true
+
+persistence:
+  enabled: true
+  size: 128Mi
+  accessModes:
+    - ReadWriteOnce

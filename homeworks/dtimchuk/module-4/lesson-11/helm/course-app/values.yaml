@@ -1,0 +1,48 @@
+replicaCount: 3
+
+namespace: dtimchuk-dev
+
+image:
+  repository: dmitrytimchuk/course-app
+  pullPolicy: IfNotPresent
+  tag: latest
+
+app:
+  name: "Course App"
+  version: "1.0"
+  environment: "development"
+  store: "redis"
+
+redis:
+  host: redis-master
+  port: 6379
+  password: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  host: course-app.local
+
+probes:
+  readiness:
+    path: /readyz
+    port: 80
+    periodSeconds: 5
+    initialDelaySeconds: 10
+    timeoutSeconds: 3
+  liveness:
+    path: /healthz
+    port: 80
+    periodSeconds: 5
+    initialDelaySeconds: 10
+    timeoutSeconds: 3
+
+strategy:
+  type: RollingUpdate
+  maxUnavailable: 1
+  maxSurge: 1
