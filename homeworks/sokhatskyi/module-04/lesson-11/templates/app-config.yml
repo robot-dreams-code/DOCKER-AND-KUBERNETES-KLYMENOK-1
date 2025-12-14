@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_STORE: {{ .Values.redis.appStore }}
+  APP_REDIS_URL: {{ .Values.redis.redisUrl }}

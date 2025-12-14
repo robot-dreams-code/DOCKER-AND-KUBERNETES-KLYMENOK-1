@@ -1,0 +1,60 @@
+replicaCount: 10
+
+labels:
+  app: course-app
+
+selectorLabels:
+  app: course-app
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+image:
+  repository: sohatz/lesson-04-web
+  tag: 2.0
+  pullPolicy: IfNotPresent
+  ports:
+    - containerPort: 8080
+
+livenessProbe:
+  tcpSocket:
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+readinessProbe:
+  httpGet: 
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+service:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+ingress:
+  ingressClassName: traefik
+  tls:
+    secretName: course-app-tls
+  rules:
+    - host: course-app.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: course-app-service
+                port:
+                  number: 8080
+
+redis:
+  appStore: redis
+  redisUrl: redis://redis-master:6379/0

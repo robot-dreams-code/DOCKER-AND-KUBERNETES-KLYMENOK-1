@@ -1,0 +1,120 @@
+#Kubectl commands
+#Homework lesson7
+#23 11 2025
+
+
+kubectl apply -f .
+kubectl get rs
+kubectl delete -f .
+kubectl exec -it course-app-deployment-57f457b65f-4btnq -- printenv | grep APP_MESSAGE
+kubectl exec -it course-app-deployment-57f457b65f-4btnq -- printenv APP_MESSAGE
+kubectl get configmap course-app-config -o yaml
+kubectl apply -f course-app-configmap.yml
+kubectl get configmap course-app-config -o yaml
+kubectl rollout restart deployment course-app-deployment
+
+
+kubectl rollout status deployment course-app-deployment
+kubectl rollout history deployment course-app-deployment
+kubectl get pods
+NAME                                     READY   STATUS             RESTARTS   AGE
+course-app-deployment-595956bdfd-25w7v   0/1     ErrImagePull       0          3m37s
+course-app-deployment-595956bdfd-7x7lj   0/1     ImagePullBackOff   0          3m37s
+course-app-deployment-595956bdfd-gqj89   0/1     ErrImagePull       0          3m37s
+course-app-deployment-595956bdfd-nptxx   0/1     ImagePullBackOff   0          3m37s
+course-app-deployment-595956bdfd-v47h8   0/1     ImagePullBackOff   0          3m37s
+course-app-deployment-6fc5c84bfb-25kl4   1/1     Running            0          9m50s
+course-app-deployment-6fc5c84bfb-kvgzj   1/1     Running            0          10m
+course-app-deployment-6fc5c84bfb-rp4cx   1/1     Running            0          10m
+course-app-deployment-6fc5c84bfb-t59cw   1/1     Running            0          10m
+course-app-deployment-6fc5c84bfb-vkc7c   1/1     Running            0          10m
+course-app-deployment-6fc5c84bfb-xhrx7   1/1     Running            0          10m
+course-app-deployment-6fc5c84bfb-zftwh   1/1     Running            0          9m49s
+course-app-deployment-6fc5c84bfb-zfwp8   1/1     Running            0          9m50s
+redis-6989fddb6b-qd9ll                   1/1     Running            0          23m
+
+
+kubectl describe pod course-app-deployment-595956bdfd-25w7v
+docker tag eugene45ua/course-app:latest eugene45ua/course-app:v2.
+docker images
+docker login
+docker push eugene45ua/course-app:v2
+
+kubectl rollout undo deployment course-app-deployment
+#deployment.apps/course-app-deployment rolled back
+
+kubectl rollout status deployment course-app-deployment
+#Waiting for deployment "course-app-deployment" rollout to finish: 8 of 10 updated replicas are available...
+#Waiting for deployment "course-app-deployment" rollout to finish: 9 of 10 updated replicas are available...
+#deployment "course-app-deployment" successfully rolled out
+kubectl set image deployment/course-app-deployment course-app=eugene45ua/course-app:v2
+#deployment.apps/course-app-deployment image updated
+
+kubectl rollout status deployment course-app-deployment
+#Waiting for deployment "course-app-deployment" rollout to finish: 5 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 5 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 5 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 6 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 6 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 6 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 6 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 6 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 7 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 9 out of 10 new replicas have been updated...
+#Waiting for deployment "course-app-deployment" rollout to finish: 4 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 3 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 3 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 3 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 2 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 2 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 2 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 2 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 1 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 1 old replicas are pending termination...
+#Waiting for deployment "course-app-deployment" rollout to finish: 9 of 10 updated replicas are available...
+#deployment "course-app-deployment" successfully rolled out
+
+
+#after changing strategy in deploymeny.yaml, in spec
+
+kubectl apply -f course-app-deployment.yaml
+kubectl get deployment course-app-deployment -o yaml | grep -A 5 strategy
+kubectl rollout status deployment course-app-deployment
+
+==================================================================================
+Strategy options:
+
+(default RollingUpdate:
+maxUnavailable: 25%
+maxSurge: 25%)
+
+№1 Slow, but safe
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
+
+№2 Fast, but with more resources
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 2
+    maxSurge: 3
+
+№3 Without Surge, but with high maxUnavailable (no extra pods, fast, but with 50% downtime)
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 50%
+    maxSurge: 0
+
+№4 Recreate (replace)
+First delete all pods, then create new, no extra resources are needed, no conflicts (db), but 100% downtime
+strategy:
+  type: Recreate
+
+

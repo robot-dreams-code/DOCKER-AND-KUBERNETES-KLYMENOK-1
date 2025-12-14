@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: yurievac/lesson-06:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: "Europe/Kiev"
+            - name: LANG
+              value: "en_US.UTF-8"
+            - name: LC_ALL
+              value: "en_US.UTF-8"
+            - name: LANGUAGE
+              value: "en_US:en"
+            - name: APP_MESSAGE
+              value: "Welcome to the Course App"
+            - name: "APP_STORE"
+              value: "redis"
+            - name: "APP_REDIS_URL"
+              value: "redis://:password@redis:6379/0"
+
+
