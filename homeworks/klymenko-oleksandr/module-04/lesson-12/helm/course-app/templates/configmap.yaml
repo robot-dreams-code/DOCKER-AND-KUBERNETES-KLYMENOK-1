@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "course-app.fullname" . }}-config
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+data:
+  {{- $configData := dict }}
+  {{- $redisUrl := default (printf "%s://%s:%d" .Values.redis.protocol .Values.redis.host (int .Values.redis.port)) .Values.redis.url }}
+  {{- $_ := set $configData "APP_REDIS_URL" $redisUrl }}
+  {{- range $key, $value := .Values.config }}
+    {{- $snakeKey := regexReplaceAll "([a-z0-9])([A-Z])" $key "${1}_${2}" | replace "-" "_" | replace "." "_" | upper }}
+    {{- $envKey := ternary $key (printf "APP_%s" $snakeKey) (hasPrefix $key "APP_") }}
+    {{- $_ := set $configData $envKey $value }}
+  {{- end }}
+  {{- range $key, $value := $configData }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
