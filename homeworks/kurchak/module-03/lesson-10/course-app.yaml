@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      initContainers:
+        - name: wait-for-redis
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for redis service...";
+              until nc -z redis 6379; do
+                echo "redis not ready yet";
+                sleep 2;
+              done;
+              echo "redis is reachable."
+      containers:
+        - name: course-app
+          image: docker.io/bkrddk/course-app:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+      volumes:
+        - name: appdata
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app
+  labels:
+    app: course-app
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
