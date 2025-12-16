@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-viewer-read-dragonfly
+  namespace: rd
+subjects:
+- kind: ServiceAccount
+  name: db-viewer
+  apiGroup: ""
+roleRef:
+  kind: Role 
+  name: dragonfly-reader 
+  apiGroup: rbac.authorization.k8s.io
+
