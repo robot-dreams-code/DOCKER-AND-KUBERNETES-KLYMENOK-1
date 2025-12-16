@@ -42,9 +42,9 @@ podLabels: {}
 app: course-app
 
 environment:
-  APP_MESSAGE: "Welcome to the Helm Chart Dragonfly Application!"
-  APP_STORE: "dragonfly-dragonfly-operator"
-  APP_REDIS_URL: "dragonfly://dragonfly-operator:6379/0"
+  APP_MESSAGE: "Helm Chart Dragonfly Application!"
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://dragonfly-app:6379/0"
   REDIS_PORT: "6379"  
 
 podSecurityContext: {}

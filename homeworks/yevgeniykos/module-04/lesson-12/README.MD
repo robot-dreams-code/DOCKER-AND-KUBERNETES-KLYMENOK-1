@@ -33,6 +33,10 @@ dragonflies    dragonflydb.io/v1alpha1      true         Dragonfly
   APP_REDIS_URL: "dragonfly://dragonfly-operator:6379/0"
 ```
 
+![alt text](img/helm-app.png)
+
+`helm upgrade --install course-app ./course-app -f ./course-app/values.yaml --namespace mod04-less12`
+
 ![alt text](img/app-d-fly.png)
 
 ## Завдання 2. RBAC для Custom Resources
