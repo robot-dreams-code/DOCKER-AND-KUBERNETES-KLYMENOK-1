@@ -1,0 +1,5 @@
+>kubectl auth can-i list dragonflies --as=system:serviceaccount:default:db-viewer
+yes
+
+>kubectl auth can-i delete dragonflies --as=system:serviceaccount:default:db-viewer
+no
