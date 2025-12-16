@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app-deployment
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: course-app
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+            initContainers:
+                -   name: wait-for-redis
+                    image: busybox
+                    command: [ 'sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done' ]
+            containers:
+                -   name: course-app
+                    image: nickdikiynd/course-app:1.0
+                    ports:
+                        -   containerPort: 8080
+                    env:
+                        -   name: APP_STORE
+                            value: "redis"
+                        -   name: APP_REDIS_URL
+                            value: "redis://redis:6379"
+

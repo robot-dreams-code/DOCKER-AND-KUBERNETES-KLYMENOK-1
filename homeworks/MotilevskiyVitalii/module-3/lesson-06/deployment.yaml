@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-motilevskiy
+  labels:
+    app: course-app-motilevskiy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app-motilevskiy
+  template:
+    metadata:
+      labels:
+        app: course-app-motilevskiy
+    spec:
+      initContainers:
+        - name: init-config-check
+          image: busybox:1.36
+          command: ['sh', '-c', "echo 'Imitation of checking' && sleep 5"]
+      containers:
+        - name: course-app-motilevskiy
+          image: motilevskiy/course-app:1.0
+          imagePullPolicy: Always # Завжди скачувати image з репозиторія (використовувати тільки для розробки)
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_STORE
+              value: "redis"
+            - name: APP_REDIS_URL
+              value: "redis://redis:6379"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          readinessProbe: # перевірка чи готова пода отримувати трафік
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe: # перевірка чи живий контейнер
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1

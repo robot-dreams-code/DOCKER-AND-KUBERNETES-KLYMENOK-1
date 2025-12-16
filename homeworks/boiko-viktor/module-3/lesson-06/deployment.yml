@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: course-app-dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: viktor1sss/course-app:lesson-04
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_STORE
+              value: "redis"
+            - name: APP_REDIS_URL
+              value: "redis://redis-course-app-svc:6379/0"
+            - name: APP_MESSAGE
+              value: "Docker and Kubetnetis Course App Hello Viktor"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: course-app-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-course-app
+  template:
+    metadata:
+      labels:
+        app: redis-course-app
+    spec:
+      containers:
+        - name: redis-course-app
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+

@@ -1,0 +1,30 @@
+# Course-app Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-service
+  labels:
+    app: course-app
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  clusterIP: None
