@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "course-app.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "course-app.labels" . | nindent 4 }}
+data:
+  APP_NAME: {{ .Values.app.name | quote }}
+  APP_VERSION: {{ .Values.app.version | quote }}
+  APP_ENVIRONMENT: {{ .Values.app.environment | quote }}
+  APP_STORE: {{ .Values.app.store | quote }}
+  APP_REDIS_URL: {{ printf "redis://%s:%d" .Values.redis.host (.Values.redis.port | int) | quote }}

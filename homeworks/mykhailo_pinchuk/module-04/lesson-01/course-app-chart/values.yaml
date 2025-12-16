@@ -1,0 +1,92 @@
+nameOverride: ""
+fullnameOverride: ""
+
+# ========== APP ==========
+app:
+  name: course-app
+  replicaCount: 3
+
+  image:
+    repository: digreyon/course-app
+    tag: latest
+    pullPolicy: Always
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+
+  # Стратегия обновления
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 2
+
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+      scheme: HTTP
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+      scheme: HTTP
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 2
+    successThreshold: 1
+  appMessage: "Welcome to the Course Application!!!"
+
+# ConfigMap
+config:
+  appStore: "redis"
+  appMessage: "Welcome to the Course Application!!!"
+  redis:
+    host: "my-app-redis-master"
+    port: 6379
+    database: 0
+    password: ""
+
+# Ingress
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: course-app.127.0.0.1.sslip.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: course-app-tls
+      hosts:
+        - course-app.127.0.0.1.sslip.io
+
+# ========== REDIS ==========
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      size: 1Gi

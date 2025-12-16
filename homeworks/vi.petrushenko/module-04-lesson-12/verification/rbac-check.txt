@@ -1,0 +1,5 @@
+=== can-i list dragonflies ===
+yes
+
+=== can-i delete dragonflies ===
+no

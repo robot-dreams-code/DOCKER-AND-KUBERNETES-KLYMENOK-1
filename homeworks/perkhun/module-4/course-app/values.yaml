@@ -1,0 +1,19 @@
+replicaCount: 10
+
+image:
+  repository: bperhun/course-app
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: course-app.127.0.0.1.sslip.io
+
+redis:
+  host: dragonfly-sample
+  port: 6379

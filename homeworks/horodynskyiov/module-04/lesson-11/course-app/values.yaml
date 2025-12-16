@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: horodynskyiov/course-app
+  tag: "lesson-11"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080        # порт сервісу
+  targetPort: 8080  # порт контейнера
+  nodePort: 30080   # порт на ноді (як у тебе зараз)
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  className: ""     # або nginx, якщо треба
+  hosts:
+    - host: course-app.127.0.0.1.sslip.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []           # потім можеш додати TLS, якщо вже налаштовував
+
+redis:
+  enabled: true
+  store: "redis"
+  # URL на Redis з Bitnami-чарту (див. розділ 2):
+  # якщо releaseName = course-redis → service = course-redis-master
+  url: "redis://course-redis-master:6379"
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

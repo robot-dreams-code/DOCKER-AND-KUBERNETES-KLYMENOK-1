@@ -1,0 +1,23 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+  labels:
+    app: dragonfly
+spec:
+  replicas: 2
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.13.0
+
+  podSecurityContext:
+    runAsNonRoot: false
+
+  containerSecurityContext:
+    runAsNonRoot: false
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

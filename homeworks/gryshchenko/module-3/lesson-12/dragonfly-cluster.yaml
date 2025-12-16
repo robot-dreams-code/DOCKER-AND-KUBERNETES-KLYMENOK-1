@@ -1,0 +1,7 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: my-dragonfly
+#  namespace: dragonfly-operator-system
+spec:
+  replicas: 3
