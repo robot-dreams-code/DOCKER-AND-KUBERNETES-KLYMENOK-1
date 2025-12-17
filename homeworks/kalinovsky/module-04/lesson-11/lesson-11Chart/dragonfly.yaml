@@ -1,0 +1,17 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly-course-app
+  labels:
+    app: dragonfly-course-app
+spec:
+  replicas: 2
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.35.1
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
