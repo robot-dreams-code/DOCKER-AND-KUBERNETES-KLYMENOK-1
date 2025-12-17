@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app-cont
+          image: olyaalchemy/course-app:v2
+
+          ports:
+            - containerPort: 8000
+
+          readinessProbe:
+            httpGet:
+              path: /readyz 
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 1
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+          volumeMounts:
+            - name: script-volume
+              mountPath: /temp
+      volumes:
+        - name: script-volume
+          configMap:
+            name: course-app-config
+  strategy:
+    type: RollingUpdate 
+    rollingUpdate:
+      maxSurge: 4
+      maxUnavailable: 5

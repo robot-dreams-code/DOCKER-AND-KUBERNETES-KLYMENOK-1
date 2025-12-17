@@ -1,0 +1,8 @@
+# Common Helm ignores
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.idea/
+.vscode/
+.git/

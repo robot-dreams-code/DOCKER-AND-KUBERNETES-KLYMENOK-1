@@ -1,0 +1,39 @@
+replicaCount: 3
+
+image:
+  repository: docker.io/bkrddk/course-app
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: course-app.127.0.0.1.sslip.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: course-app-tls
+      hosts:
+        - course-app.127.0.0.1.sslip.io
+
+env:
+  appMessage: "Hello from Helm"
+  appStore: "redis"
+  redis:
+    host: redis-master
+    port: 6379
+    db: 0
+    passwordSecret:
+      name: ""
+      key: ""
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

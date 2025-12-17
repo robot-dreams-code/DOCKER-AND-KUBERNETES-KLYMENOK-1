@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  labels:
+    app: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      # Init container для очікування Redis
+      initContainers:
+        - name: wait-for-redis
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z redis 6379; do
+                echo "Waiting for Redis..."
+                sleep 2
+              done
+      containers:
+        - name: course-app
+          image: eugene45ua/course-app
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              value: "Hello from Kubernetes!"
+            - name: APP_STORE
+              value: "redis"
+            - name: APP_REDIS_URL
+              value: "redis://redis:6379/0"
+            - name: APP_DB_PATH
+              value: "/data/app.db"
+          volumeMounts:
+            - name: appdata
+              mountPath: /data
+          # Проби для перевірки здоров'я контейнера
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: appdata
+          emptyDir: {}

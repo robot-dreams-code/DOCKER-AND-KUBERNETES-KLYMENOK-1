@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: ../../../..
+      dockerfile: homeworks/yarovskyi/module-2/lesson-05/app/Dockerfile
+    ports:
+      - "8085:8080"
+    environment:
+      - APP_STORE=redis
+      - APP_REDIS_URL=redis://:veryStrongPassword@redis:6379/0
+    healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
+        start_period: 10s
+    depends_on:
+      redis:
+        condition: service_healthy
+  redis:
+    build:
+      context: ./redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - appdata:/data
+volumes:
+  appdata:

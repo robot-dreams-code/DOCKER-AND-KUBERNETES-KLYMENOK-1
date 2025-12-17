@@ -1,0 +1,47 @@
+replicaCount: 5
+
+image:
+  repository: denys55/course-app
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: "course-app.local"
+  path: "/"
+  pathType: Prefix
+
+# Application configuration
+app:
+  message: "Hello from Helm!"
+  store: "redis"
+  dbPath: "/data/app.db"
+  # Redis connection settings (will be used to construct connection string)
+  redis:
+    # If using external redis (like Bitnami), set enabled: false here 
+    # and provide connection details below.
+    host: "redis-master" # Default service name for bitnami redis
+    port: 6379
+    password: "pass"
+    db: "0"
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

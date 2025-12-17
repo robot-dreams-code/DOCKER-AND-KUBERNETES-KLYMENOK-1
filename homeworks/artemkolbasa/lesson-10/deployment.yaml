@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+      - name: course-app
+        image: kekotopko/course-app:latest
+        ports:
+        - containerPort: 8080
+
+        envFrom:
+        - configMapRef:
+            name: course-app-config
+
+        readinessProbe:
+          httpGet:
+            path: /healthz #/unhealthy
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 1
+
+        livenessProbe:
+          httpGet:
+            path: /healthz #/unhealthy
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1

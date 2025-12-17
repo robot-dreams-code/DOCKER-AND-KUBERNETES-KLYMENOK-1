@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_STORE_NAME: {{ .Values.appStore.appStoreName }}
+  APP_STORE_URL: {{ .Values.appStore.appStoreUrl }}

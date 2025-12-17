@@ -1,0 +1,12 @@
+apiVersion: v2
+name: course-app
+description: A Helm chart for Course Application with Redis integration
+type: application
+version: 0.1.14
+appVersion: "lesson-12"
+
+dependencies:
+  - name: dragonfly-operator
+    version: "v1.3.1"
+    repository: "oci://ghcr.io/dragonflydb/dragonfly-operator/helm"
+    condition: dragonflyOperator.enabled

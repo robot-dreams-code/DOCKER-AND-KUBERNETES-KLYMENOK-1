@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+data:
+  APP_MESSAGE: "Hello World!!!"
+  TZ: "Europe/Kiev"
+  LANG: "en_US.UTF-8"
+  LC_ALL:  "en_US.UTF-8"
+  LANGUAGE: "en_US:en"
+  APP_STORE: "redis"
+

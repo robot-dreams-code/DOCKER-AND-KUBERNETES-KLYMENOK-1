@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app-lvl8
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+spec:
+  type: ClusterIP
+  selector:
+    app: database
+  ports:
+    - port: 6379
+      targetPort: 6379

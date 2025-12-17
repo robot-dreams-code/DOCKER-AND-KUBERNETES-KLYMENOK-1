@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-motilevskiy
+spec:
+  type: ClusterIP
+  selector:
+    app: course-app-motilevskiy
+  ports:
+    - port: 8080        # порт сервісу у кластері
+      targetPort: 8080  # порт у контейнері

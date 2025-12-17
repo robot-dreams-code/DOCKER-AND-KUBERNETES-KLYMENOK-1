@@ -1,0 +1,30 @@
+app:
+  replicas: 10
+  image:
+    repository: hbvhuwe/course-app
+    tag: latest
+  message: "Hello World"
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 125m
+    limits:
+      memory: 200Mi
+      cpu: 250m
+
+ingress:
+  enabled: true
+  className: traefik
+  host: course-app.local
+  tlsSecret: course-app-tls
+
+redis:
+  internal:
+    enabled: true # true = use our StatefulSet, false = use external Redis
+    image: "redis:8.4.0"
+    storage: 1Gi
+
+  external:
+    host: "" # e.g. redis-master
+    port: 6379
+    password: ""

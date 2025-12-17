@@ -1,0 +1,8 @@
+architecture: standalone
+fullnameOverride: redis
+auth:
+  enabled: false
+master:
+  persistence:
+    enabled: true
+    size: 1Gi
