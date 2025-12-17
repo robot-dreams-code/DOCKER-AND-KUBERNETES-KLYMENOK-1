@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: rd
+  name: app-config
+data:
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://dragonfly.dragonfly-operator-system.svc.cluster.local:6379"

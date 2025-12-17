@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: {{ .Values.app.name }}
+        image: {{ .Values.app.image.image }}
+        ports:
+        - containerPort: {{ .Values.app.image.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.app.readinessProbe.httpGet.path }}
+            port: {{ .Values.app.readinessProbe.httpGet.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.app.livenessProbe.httpGet.path }}
+            port: {{ .Values.app.livenessProbe.httpGet.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+        env:
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_NAME
+        - name: APP_LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_LOG_LEVEL
+        - name: APP_STORE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_STORE
+        - name: APP_REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_REDIS_URL
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%

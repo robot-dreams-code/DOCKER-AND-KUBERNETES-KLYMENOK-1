@@ -1,0 +1,14 @@
+{{- if .Values.dragonfly.enabled -}}
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: {{ include "course-app.fullname" . }}-{{ .Values.dragonfly.name }}
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: dragonfly
+spec:
+  replicas: {{ .Values.dragonfly.replicas }}
+  image: "{{ .Values.dragonfly.image.repository }}:{{ .Values.dragonfly.image.tag }}"
+  resources:
+    {{- toYaml .Values.dragonfly.resources | nindent 4 }}
+{{- end }}

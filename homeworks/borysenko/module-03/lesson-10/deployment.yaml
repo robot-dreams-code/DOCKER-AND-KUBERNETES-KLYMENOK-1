@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment  
+  labels:
+    app: course-app
+spec:
+  replicas: 5
+  strategy:
+    type: Recreate        
+  selector:
+    matchLabels:
+      app: course-app          
+  template:                    
+    metadata:
+      labels:
+        app: course-app        
+    spec:
+      containers:
+        - name: course-app
+          image: my-build:2.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: course-app-map
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
