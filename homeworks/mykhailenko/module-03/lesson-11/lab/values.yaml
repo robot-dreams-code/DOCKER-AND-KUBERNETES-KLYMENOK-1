@@ -1,0 +1,21 @@
+labels:
+  env: qa
+  app: course-app
+
+image:
+  tag: dev
+  name: lesson-04
+  repository: mmykhailenko
+
+port: 8080
+
+ingress:
+  hosts:
+    - ingress.local
+    - 127-0-0-1.nip.io
+
+replicas: 3
+
+redis:
+  enable: true
+
