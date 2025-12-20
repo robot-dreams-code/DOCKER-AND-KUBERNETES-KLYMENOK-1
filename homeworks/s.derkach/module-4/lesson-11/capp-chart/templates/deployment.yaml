@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.releaseName }}
+  labels:
+    app: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+      annotations:
+        config: DATA
+    spec:
+      containers:
+      - name: {{ .Values.releaseName }}
+        image: {{ .Values.app.image }}
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 400m
+            memory: 512Mi
+        env:
+        - name: REDIS_HOST
+          value: {{ .Release.Name }}-redis-master
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-redis
+              key: redis-password
+        - name: APP_STORE
+          valueFrom:
+            configMapKeyRef:
+              name: course-app-config
+              key: APP_STORE
+        - name: APP_REDIS_URL
+          value: {{ printf "redis://:$(REDIS_PASSWORD)@%s-redis-master:6379" .Release.Name | quote }}

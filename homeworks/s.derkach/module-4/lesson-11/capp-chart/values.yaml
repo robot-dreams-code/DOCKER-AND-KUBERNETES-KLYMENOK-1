@@ -1,0 +1,31 @@
+replicaCount: 10
+
+releaseName: course-app
+
+
+app:
+  name: capp
+  image: malskur/capp:latest
+  port: 8080
+  store: "redis"
+
+ingress:
+  host: capp.local
+  tlsSecret: capp-tls-secret
+
+redis:
+  image:
+      registry: public.ecr.aws
+      repository: bitnami/redis
+      tag: 7.4.2
+      digest: ""
+  global:
+    security:
+      allowInsecureImages: true
+  architecture: standalone
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+  replica:
+    replicaCount: 1
