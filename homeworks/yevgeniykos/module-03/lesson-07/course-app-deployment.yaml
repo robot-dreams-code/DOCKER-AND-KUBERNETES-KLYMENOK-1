@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app-deployment
+  namespace: mod03-less07
+  labels:
+    app: course-app
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 20%
+      maxSurge: 30%  
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: rdlsolutions/course-app:1.0.1
+          resources:
+            requests:
+              cpu: "100m"  
+              memory: "64Mi" 
+            limits:
+              cpu: "200m"  
+              memory: "512Mi" 
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: welcome_message
+            - name: APP_REDIS_URL
+              valueFrom:  
+                configMapKeyRef:
+                  name: course-app-config
+                  key: redis-url
+            - name: APP_DB_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: course-app-config
+                  key: data-app-db-path
+          volumeMounts:
+            - name: dbl-data
+              mountPath: /data
+          imagePullPolicy: Always
+      volumes:
+        - name: dbl-data
+          persistentVolumeClaim:
+            claimName: dbl-data-claim
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: mod03-less07
+data:
+  welcome_message: "Welcome to the Course Application!"
+  redis-url: "redis://redis:6379/0"
+  data-app-db-path: "/data/app.db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app-service
+  namespace: mod03-less07
+  labels:
+    app: course-app
+spec:
+  type: NodePort
+  selector:
+    app: course-app
+  ports:
+    - port: 8080 
+      targetPort: 8080 
+      nodePort: 30888 

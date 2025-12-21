@@ -1,0 +1,5 @@
+replicaCount: 1
+containerPort: 8080
+servicePort: 80
+redisName: "dragonfly.rd.svc.cluster.local"
+redisPort: 6379

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: course-app       # Ім'я чарту 
+description: A Helm chart for course-app with Redis
+type: application
+version: 0.1.0         # Версія самого чарту 
+appVersion: "2.0"      # Версія вашого образу 

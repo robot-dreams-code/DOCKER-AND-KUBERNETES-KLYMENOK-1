@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "course-app.fullname" . }}-config
+  labels:
+    {{- include "course-app.labels" . | nindent 4 }}
+data:
+  APP_STORE: {{ .Values.config.appStore | quote }}
+  {{- if .Values.config.redis.password }}
+  APP_REDIS_URL: "redis://:{{ .Values.config.redis.password }}@{{ .Values.config.redis.host }}:{{ .Values.config.redis.port }}/{{ .Values.config.redis.database }}"
+  {{- else }}
+  APP_REDIS_URL: "redis://{{ .Values.config.redis.host }}:{{ .Values.config.redis.port }}/{{ .Values.config.redis.database }}"
+  {{- end }}
+  APP_MESSAGE: {{ .Values.config.appMessage | quote }}

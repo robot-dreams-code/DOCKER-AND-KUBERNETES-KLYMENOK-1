@@ -1,0 +1,12 @@
+{{- if .Values.redis.internal.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "course-app.fullname" . }}-redis
+spec:
+  clusterIP: None
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+{{- end }}

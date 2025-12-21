@@ -1,0 +1,58 @@
+replicaCount: 3
+image:
+  repository: ypodop/course-app
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+deployment:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 2
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  host: kubernetes.docker.internal
+  path: /
+  pathType: Prefix
+  tls:
+    enabled: true
+    secretName: course-app-tls
+
+config:
+  APP_MESSAGE: "Welcome to the Course App (Kubernetes)"
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis:6379/0"
+  APP_DB_PATH: "/app/data/data.sql"
+
+probes:
+  readiness:
+    enabled: true
+    path: /readyz
+    port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  liveness:
+    enabled: true
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+redis:
+  host: "redis-redis-master"
+  port: 6379
+  password:
+    enabled: false

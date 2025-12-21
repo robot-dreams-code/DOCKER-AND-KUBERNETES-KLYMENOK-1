@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: dragonfly-operator-system
+  name: db-readonly
+rules:
+  - apiGroups: [ "dragonflydb.io" ]
+    resources: [ "dragonflies" ]
+    verbs: ["get", "list", "watch"]

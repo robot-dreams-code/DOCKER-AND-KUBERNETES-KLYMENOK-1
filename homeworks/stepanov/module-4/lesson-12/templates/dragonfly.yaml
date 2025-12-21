@@ -1,0 +1,17 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: {{ .Release.Name }}-dragonfly-instance
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: dragonfly
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+  annotations:
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+spec:
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.29.0
+  replicas: 1

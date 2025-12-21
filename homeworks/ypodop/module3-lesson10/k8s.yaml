@@ -1,0 +1,160 @@
+# =========================================
+# Namespace
+# =========================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: course-app
+
+---
+# =========================================
+# ConfigMap with ENV variables
+# =========================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: course-app-config
+  namespace: course-app
+data:
+  APP_MESSAGE: "Welcome to the Course App (Kubernetes)"
+  APP_STORE: "redis"
+  APP_REDIS_URL: "redis://redis:6379/0"
+  APP_DB_PATH: "/app/data/data.sql"
+
+---
+# =========================================
+# Redis Service
+# =========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: course-app
+spec:
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
+
+---
+# =========================================
+# Redis Deployment
+# =========================================
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: course-app
+spec:
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          args: ["--save", "60", "1", "--appendonly", "yes"]
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+---
+# =========================================
+# course-app Service
+# =========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-app
+  namespace: course-app
+spec:
+  selector:
+    app: course-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+---
+# =========================================
+# course-app Deployment
+# =========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+  namespace: course-app
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2   # at most 2 pod can be down during update
+      maxSurge: 2         # at most 2 extra pod above desired replicas
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+        - name: course-app
+          image: ypodop/course-app:latest 
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: course-app-config
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5     # почекай 5с перед першою перевіркою
+            periodSeconds: 5           # перевіряти кожні 5с
+            timeoutSeconds: 2          # якщо немає відповіді за 2с — вважається fail
+            failureThreshold: 3        # 3 фейли підряд → pod не готовий
+            successThreshold: 1        # 1 успішна відповідь → pod знову ready
+          #    Якщо /healthz перестає відповідати (або повертає помилку),
+          #    Kubernetes перезапускає контейнер.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10    # дати часу додатку стартувати
+            periodSeconds: 10          # перевірка кожні 10с
+            timeoutSeconds: 2          # 2с на відповідь
+            failureThreshold: 3        # 3 фейли → kube вбиває контейнер і перезапускає

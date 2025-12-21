@@ -1,0 +1,12 @@
+{{- if .Values.dragonfly.enabled }}
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: {{ .Values.dragonfly.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.dragonfly.replicas }}
+  image: {{ .Values.dragonfly.image }}
+  resources:
+{{ toYaml .Values.dragonfly.resources | indent 4 }}
+{{- end }}

@@ -1,0 +1,53 @@
+# Snak App Configuration
+app:
+  name: snak-app
+  replicaCount: 10
+
+  image:
+    repository: andreqko/snak-app
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+  ingress:
+    enabled: true
+    host: app.snak
+    path: /
+    pathType: Prefix
+
+  config:
+    APP_STORE: redis
+    APP_REDIS_URL: redis://{{ .Release.Name }}-redis-master:6379
+
+  probes:
+    readiness:
+      enabled: true
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 2
+      successThreshold: 1
+      failureThreshold: 3
+    liveness:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3
+
+# Redis Configuration (Bitnami dependency)
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  image:
+    tag: "latest"
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+  replica:
+    replicaCount: 0

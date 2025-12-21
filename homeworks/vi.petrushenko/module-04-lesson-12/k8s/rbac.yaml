@@ -1,0 +1,36 @@
+# rbac.yaml
+
+# 1. ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: db-viewer
+  namespace: default
+---
+
+# 2. Role: db-readonly
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: db-readonly
+  namespace: default
+rules:
+- apiGroups: ["dragonflydb.io"]    # Група API для Custom Resource
+  resources: ["dragonflies"]       # Ресурс у множині
+  verbs: ["get", "list", "watch"]  # Дозвіл лише на читання
+---
+
+# 3. RoleBinding: Зв'язування SA з Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-viewer-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: db-viewer
+  namespace: default
+roleRef:
+  kind: Role
+  name: db-readonly
+  apiGroup: rbac.authorization.k8s.io

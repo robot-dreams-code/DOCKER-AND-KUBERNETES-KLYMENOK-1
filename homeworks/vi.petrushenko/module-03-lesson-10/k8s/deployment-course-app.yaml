@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: course-app
+  template:
+    metadata:
+      labels:
+        app: course-app
+    spec:
+      containers:
+      - name: course-app
+        image: vvpet/course-app:v10-redis        # ← цей образ 100% рахує через Redis
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_STORE
+          value: "redis"
+        - name: APP_REDIS_URL
+          value: "redis://redis-0.redis.default.svc.cluster.local:6379"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
