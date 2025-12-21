@@ -1,0 +1,17 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly-db
+  namespace: hw12
+spec:
+  replicas: 2
+  image: docker.io/dragonflydb/dragonfly:v1.27.1
+  args:
+    - "--maxmemory=512mb"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
