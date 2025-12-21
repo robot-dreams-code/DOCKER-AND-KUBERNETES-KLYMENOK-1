@@ -18,7 +18,7 @@ metadata:
 data:
   APP_MESSAGE: "Welcome to the Course App (Kubernetes)"
   APP_STORE: "redis"
-  APP_REDIS_URL: "redis://redis:6379/0"
+  APP_REDIS_URL: "redis://dragonfly:6379/0"
   APP_DB_PATH: "/app/data/data.sql"
 
 ---
@@ -87,7 +87,21 @@ spec:
         resources:
           requests:
             storage: 1Gi
-
+---
+# =========================================
+# DragonflyDB Deployment
+# =========================================
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+  namespace: course-app
+spec:
+  replicas: 1
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.21.2
+  serviceSpec:
+    name: dragonfly
+    type: ClusterIP
 ---
 # =========================================
 # course-app Service
