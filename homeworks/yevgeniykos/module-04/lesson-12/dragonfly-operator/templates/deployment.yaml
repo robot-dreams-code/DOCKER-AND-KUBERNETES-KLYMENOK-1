@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dragonfly-operator.fullname" . }}
+  labels:
+    {{- include "dragonfly-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+    control-plane: controller-manager
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "dragonfly-operator.selectorLabels" . | nindent 6 }}
+      control-plane: controller-manager
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "dragonfly-operator.labels" . | nindent 8 }}
+        control-plane: controller-manager
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.manager.priorityClassName }}
+      priorityClassName: {{ .Values.manager.priorityClassName }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "dragonfly-operator.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        {{- if .Values.rbacProxy.enabled }}
+        - args:
+            - --secure-listen-address=0.0.0.0:8443
+            - --upstream=http://127.0.0.1:8080/
+            - --logtostderr=true
+            - --v=0
+            {{- with .Values.rbacProxy.extraArgs}}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          image: "{{ .Values.rbacProxy.image.repository }}:{{ .Values.rbacProxy.image.tag  }}"
+          imagePullPolicy: {{ .Values.rbacProxy.image.pullPolicy }}
+          name: kube-rbac-proxy
+          securityContext:
+            {{- toYaml .Values.rbacProxy.securityContext | nindent 12 }}
+          ports:
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.rbacProxy.resources | nindent 12 }}
+          {{- end }}
+        - name: manager
+          args:
+            - --leader-elect
+            {{- if .Values.rbacProxy.enabled }}
+            - --metrics-bind-address=127.0.0.1:8080
+            {{- end }}
+            {{- with .Values.manager.extraArgs}}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          command:
+            - /manager
+          securityContext:
+            {{- toYaml .Values.manager.securityContext | nindent 12 }}
+          image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag | default .Chart.AppVersion  }}"
+          imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
+          livenessProbe:
+            {{- toYaml .Values.manager.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.manager.readinessProbe | nindent 12 }}
+          ports:
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.manager.resources | nindent 12 }}
+          {{- with .Values.manager.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.manager.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.manager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.manager.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.manager.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.manager.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

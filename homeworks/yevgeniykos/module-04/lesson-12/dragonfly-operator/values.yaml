@@ -1,0 +1,177 @@
+# Default values for dragonfly-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+## Custom resource configuration
+crds:
+  # -- Install and upgrade CRDs
+  install: true
+  # -- Keep CRDs on chart uninstall
+  keep: true
+
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Additional labels to add to all resources
+additionalLabels: {}
+  # app: dragonfly-operator
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: dragonfly-operator-controller-manager
+
+podAnnotations:
+  kubectl.kubernetes.io/default-container: manager
+
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+
+service:
+  type: ClusterIP
+  port: 8443
+  metricsPort: 8080
+
+terminationGracePeriodSeconds: 10
+
+rbacProxy:
+  enabled: true
+  image:
+    repository: quay.io/brancz/kube-rbac-proxy
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: v0.13.1
+
+  extraArgs: {}
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+manager:
+  image:
+    repository: docker.dragonflydb.io/dragonflydb/operator
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  extraArgs: {}
+
+  resources: {}
+#    limits:
+#      cpu: 500m
+#      memory: 128Mi
+#    requests:
+#      cpu: 10m
+#      memory: 64Mi
+
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8081
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: 8081
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  # -- Priority class name for the operator pod
+  priorityClassName: ""
+
+  nodeSelector: {}
+
+  tolerations: []
+
+
+  # -- Assign custom [TopologySpreadConstraints] rules to the application controller
+  # @default -- `[]` (defaults to global.topologySpreadConstraints)
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  ## If labelSelector is left out, it will default to the labelSelector configuration of the deployment
+  topologySpreadConstraints: []
+    # - maxSkew: 1
+    #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  affinity: {}
+#    nodeAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        nodeSelectorTerms:
+#          - matchExpressions:
+#              - key: kubernetes.io/arch
+#                operator: In
+#                values:
+#                  - amd64
+#                  - arm64
+#                  - ppc64le
+#                  - s390x
+#              - key: kubernetes.io/os
+#                operator: In
+#                values:
+#                  - linux
+
+serviceMonitor:
+  # When set true then use a ServiceMonitor to configure scraping
+  enabled: false
+  # Set how frequently Prometheus should scrape
+  interval: 30s
+  # Set path to cloudwatch-exporter telemtery-path
+  path: /metrics
+  # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
+  labels: {}
+  # Set timeout for scrape
+  timeout: 10s
+  # Set relabelings for the ServiceMonitor, use to apply to samples before scraping
+  relabelings: []
+  # Set metricRelabelings for the ServiceMonitor, use to apply to samples for ingestion
+  metricRelabelings: []
+  # Example - note the Kubernetes convention of camelCase instead of Prometheus' snake_case
+  # metricRelabelings:
+  #   - sourceLabels: [dbinstance_identifier]
+  #     action: replace
+  #     replacement: mydbname
+  #     targetLabel: dbname
+
+grafanaDashboard:
+  enabled: false
+  folder: database
+  # -- Grafana dashboard configmap annotations.
+  annotations:
+    name: grafana_folder
+  # -- Grafana dashboard configmap labels
+  labels:
+    name: grafana_dashboard
+  grafanaOperator:
+    enabled: false
+    allowCrossNamespaceImport: true
+    # -- Selected labels for Grafana instance
+    matchLabels:
+      dashboards: grafana
