@@ -1,0 +1,25 @@
+# nonk8s
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-application
+  namespace: argocd
+spec:
+  project: lab-app-project
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: redis
+      targetRevision: 24.0.8 # Can have multiple meanings depending on repoURL. Bad design.
+      helm:
+        valueFiles:
+          - $custom-repo/redis/dev/values.yaml
+    - repoURL: https://github.com/mykytamykhailenko/argocd-lab.git
+      targetRevision: master
+      ref: custom-repo
+  destination:
+    namespace: lab
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      enabled: true
+      selfHeal: true

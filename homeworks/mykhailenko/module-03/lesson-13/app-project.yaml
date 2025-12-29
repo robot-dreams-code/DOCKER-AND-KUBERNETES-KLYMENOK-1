@@ -1,0 +1,15 @@
+# nonk8s
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: lab-app-project
+  namespace: argocd
+spec:
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: 'lab'
+      server: 'https://kubernetes.default.svc'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'

@@ -1,0 +1,25 @@
+# nonk8s
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nexus-application
+  namespace: argocd
+spec:
+  project: lab-app-project
+  sources:
+    - repoURL: https://sonatype.github.io/helm3-charts
+      chart: nxrm-ha
+      targetRevision: 87.1.0
+      helm:
+        valueFiles:
+          - $custom-repo/nexus/values.yaml
+    - repoURL: https://github.com/mykytamykhailenko/argocd-lab.git
+      targetRevision: master
+      ref: custom-repo
+  destination:
+    namespace: lab
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      enabled: true
+      selfHeal: true
