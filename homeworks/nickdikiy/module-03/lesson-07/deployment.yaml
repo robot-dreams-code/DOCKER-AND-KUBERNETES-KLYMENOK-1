@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: course-app-deployment
+    namespace: homework
+spec:
+    replicas: 10
+    selector:
+        matchLabels:
+            app: course-app
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+    template:
+        metadata:
+            labels:
+                app: course-app
+        spec:
+            initContainers:
+                -   name: init-course-app
+                    image: busybox:1.35.0
+                    command:
+                        - sh
+                        - -c
+                        - |
+                            echo "InitContainer starting..."
+                            sleep 1
+                            echo "InitContainer finished!"
+            containers:
+                -   name: course-app
+                    image: nickdikiynd/course-app:1.0
+                    env:
+                        -   name: APP_NAME
+                            valueFrom:
+                                configMapKeyRef:
+                                    name: course-app-configmap
+                                    key: APP_NAME
+                        -   name: CONTAINER_ENV_VAR
+                            value: "someVar2"
+                    resources:
+                        requests:
+                            cpu: 100m
+                            memory: 128Mi
+                        limits:
+                            cpu: 200m
+                            memory: 256Mi
+                    ports:
+                        -   containerPort: 80
