@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+{{ include "lab.metadata" . }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{ include "lab.labels.list" . | indent 6 }}
+  template:
+    {{ include "lab.metadata" . | indent 4 }}
+    spec:
+      containers:
+        - name: app
+          {{- required "Image is required!" .Values.image.name }}
+          image: {{ list .Values.image.repository "/" .Values.image.name ":" .Values.image.tag | join "" | trimPrefix "/" | trimSuffix ":" }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Namespace }}-config
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.port }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.port }}

@@ -5,6 +5,7 @@ metadata:
   namespace: lab
   labels:
     env: qa
+    app: dev
 spec:
   progressDeadlineSeconds: 30
   replicas: 10
@@ -22,6 +23,7 @@ spec:
       namespace: lab
       labels:
         env: qa
+        app: dev
     spec:
       containers:
         - name: app
@@ -39,3 +41,10 @@ spec:
             httpGet:
               path: /readyz
               port: 8080
+          volumeMounts:
+            - mountPath: /tmp
+              name: mount
+      volumes:
+        - name: mount
+          persistentVolumeClaim:
+            claimName: app-pvc

@@ -7,6 +7,7 @@ spec:
   type: ClusterIP
   selector:
     env: qa
+    app: dev
   ports:
     - name: api
       port: 8080

@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+{{ include "lab.metadata" . }}
+spec:
+  ingressClassName: traefik
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "lab.service.name" $ | quote }}
+                port:
+                  name: api
+    {{- end }}

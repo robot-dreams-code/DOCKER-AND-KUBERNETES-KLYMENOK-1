@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: lab
+  name: redis-svc
+spec:
+  clusterIP: None
+  selector:
+    env: qa
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: lab
+  name: redis-sts
+spec:
+  replicas: 3
+  serviceName: "redis-svc"
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      env: qa
+      app: redis
+  template:
+    metadata:
+      namespace: lab
+      name: redis-sts-pod
+      labels:
+        env: qa
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:8.2.3-alpine3.22
+          ports:
+             - containerPort: 6379
+          volumeMounts:
+            - mountPath: /data
+              name: redis-pvc
+  volumeClaimTemplates:
+    - metadata:
+        namespace: lab
+        name: redis-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100M
+          limits:
+            storage: 100M

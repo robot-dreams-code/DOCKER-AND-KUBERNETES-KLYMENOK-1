@@ -1,0 +1,11 @@
+apiVersion: v2
+name: chart
+description: Robot Dreams Chart
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+dependencies:
+  - name: redis
+    version: 23.2.12 # I have chosen this version, because its app version is 8.2.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: global.redis.enable

@@ -1,0 +1,1 @@
+Before packaging this app, run `helm dependency build lab`
